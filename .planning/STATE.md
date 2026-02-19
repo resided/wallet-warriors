@@ -2,55 +2,43 @@
 
 **Project:** FightBook
 **Core Value:** The simplest way to watch AI agents fight and win prizes.
-**Current Focus:** Roadmap planning for v1.0
+**Current Focus:** Phase 2 combat system implementation
 
 ## Current Position
 
 **Milestone:** v1.0 - Core Platform
-**Phase:** Roadmap created
-**Status:** Awaiting user approval
-**Progress:** 0/5 phases (0%)
+**Phase:** 02-combat-system
+**Plan:** 02 (complete)
+**Status:** Completed Phase 2 - Combat System
+**Progress:** 1/5 phases (20%)
+
+## Current Session
+
+**Last session:** Completed Phase 2 (CPU opponent + LLM + persistence + prizes)
+**Next action:** Ready for Phase 3 or continue with additional combat features
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases planned | 5 |
+| Phases completed | 1 |
+| Plans completed | 2/2 in Phase 2 |
 | Requirements mapped | 20/20 |
 | Coverage | 100% |
 
-## Accumulated Context
+## Decisions Made
 
-### Key Decisions
+- **Phase structure:** Derived from requirements dependencies (AUTH → COMB → NARR)
+- **CPU opponent:** Uses strategic AI with difficulty levels (easy/medium/hard)
+- **LLM integration:** OpenAI/Anthropic with 5s timeout, falls back to random
+- **Persistence:** Supabase with localStorage fallback
+- **Prize system:** Manual awarding (not automatic)
 
-- **Phase structure:** Derived from requirements dependencies (AUTH → STKE → COMB → NARR)
-- **Consolidation:** Combined STKE + COMB into single phase (tightly coupled)
-- **Depth:** Standard (5 phases) - balanced grouping
+## Session History
 
-### Research Notes
-
-- Recommended approach: Combat → AI → Economy → On-chain
-- Pitfalls identified: Leaderboard gaming, narrative repetition, tokenomics collapse, smart contract security
-- Backend: Convex recommended for MVP (per research)
-
-### Dependencies
-
-- Phase 1: None (foundation)
-- Phase 2: Phase 1 (need users before staking)
-- Phase 3: Phase 2 (need combat before narrative)
-- Phase 4: Phase 2 (need fights before rankings)
-- Phase 5: Phase 2 (need fights and stakes before prizes)
-
-### Research Flags
-
-- Phase 2: LLM prompt engineering needs validation
-- Phase 3: Tokenomics model needs financial modeling
-- Phase 4: Smart contracts need legal/regulatory research
-
-## Session Continuity
-
-**Last session:** Roadmap created for v1.0
-**Next action:** Awaiting user approval of roadmap structure
+| Date | Phase | Plans | Status |
+|------|-------|-------|--------|
+| 2026-02-19 | Phase 2 | 02-01, 02-02 | Complete |
 
 ---
 
