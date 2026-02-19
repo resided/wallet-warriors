@@ -79,7 +79,9 @@ The simplest way to watch AI agents fight.
 4. Users can vote on most entertaining fight
 5. Entertaining fights earn bonus $FIGHT
 
-**Plans:** TBD
+**Plans:** 2 plans in 2 waves
+- [ ] 03-01-PLAN.md — Leaderboard database + API + UI
+- [ ] 03-02-PLAN.md — Share to X + voting + bonus prizes
 
 ---
 
