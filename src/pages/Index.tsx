@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import CoreLoop from "@/components/CoreLoop";
 import FighterGenesis from "@/components/FighterGenesis";
+import TrainingCamp from "@/components/TrainingCamp";
 import FightExperience from "@/components/FightExperience";
 import TechStack from "@/components/TechStack";
 import Roadmap from "@/components/Roadmap";
@@ -15,6 +16,7 @@ const Index = () => {
       <Hero />
       <CoreLoop />
       <FighterGenesis />
+      <TrainingCamp />
       <FightExperience />
       <TechStack />
       <Roadmap />

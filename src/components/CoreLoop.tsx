@@ -1,47 +1,47 @@
-import { Wallet, Zap, TrendingUp, Shield, Swords, Eye } from "lucide-react";
+import { Bot, Zap, TrendingUp, Shield, Swords, Eye } from "lucide-react";
 import AnimatedSection, { StaggerContainer, StaggerItem } from "./AnimatedSection";
 
 const steps = [
   {
-    icon: Wallet,
-    title: "Connect Wallet",
-    subtitle: "Wallet Archaeology",
-    description: "Your on-chain history becomes your fighter's DNA. Age, velocity, volume — nothing is random.",
+    icon: Bot,
+    title: "Mint Agent",
+    subtitle: "Fighter Genesis",
+    description: "Spin up a fresh AI agent — or boost it with wallet history. Either way, your fighter starts here.",
     accent: "primary" as const,
   },
   {
     icon: Zap,
-    title: "Fighter Genesis",
-    subtitle: "Soulbound Stats",
-    description: "Non-transferable attributes minted from real blockchain behavior. Your degen score is showing.",
+    title: "Define Skills",
+    subtitle: "skills.md",
+    description: "Configure your agent's fighting style, strategy bias, and risk tolerance through a simple skills file.",
     accent: "secondary" as const,
   },
   {
     icon: Swords,
-    title: "AI Agent Training",
-    subtitle: "Agentic Brain",
-    description: "LLM-powered fight agents with memory, strategy engines, and personality derived from wallet behavior.",
+    title: "Train & Spar",
+    subtitle: "Training Camp",
+    description: "Run accelerated simulations against NPC fighters. Your agent learns, adapts, and develops muscle memory.",
     accent: "primary" as const,
   },
   {
     icon: Eye,
-    title: "Simulated Combat",
-    subtitle: "Fight Night",
-    description: "Cinematic 3D battles with AI commentary, broadcast-quality camera work, and real-time action.",
+    title: "Fight Night",
+    subtitle: "Live Combat",
+    description: "Cinematic AI-vs-AI battles with real-time commentary. Your agent fights autonomously — you just watch.",
     accent: "secondary" as const,
   },
   {
     icon: TrendingUp,
-    title: "Prediction Markets",
-    subtitle: "On-Chain Settlement",
-    description: "AMM-driven odds, moneyline bets, round betting, and live wagering between rounds.",
+    title: "Stake & Predict",
+    subtitle: "Prediction Markets",
+    description: "AMM-driven odds on every bout. Bet on your agent or scout the competition for edge.",
     accent: "primary" as const,
   },
   {
     icon: Shield,
-    title: "On-Chain Settlement",
-    subtitle: "Instant Resolution",
-    description: "Oracle-attested outcomes settled instantly on Base. Transparent, trustless, permanent.",
+    title: "Earn & Evolve",
+    subtitle: "On-Chain Settlement",
+    description: "Winners earn from prediction pools. Fight records compound into permanent agent reputation.",
     accent: "secondary" as const,
   },
 ];
@@ -49,17 +49,16 @@ const steps = [
 const CoreLoop = () => {
   return (
     <section id="core-loop" className="relative py-32 px-6">
-      {/* Subtle divider */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
       <div className="max-w-6xl mx-auto">
         <AnimatedSection className="text-center mb-20">
           <p className="font-mono text-[11px] tracking-[0.3em] text-primary/70 mb-5 uppercase">The Core Loop</p>
           <h2 className="text-5xl md:text-7xl font-display text-foreground">
-            Wallet DNA → <span className="text-primary text-glow-cyan">Combat</span>
+            Agent → Train → <span className="text-primary text-glow-cyan">Fight</span>
           </h2>
           <p className="mt-6 text-muted-foreground max-w-xl mx-auto">
-            Six steps from wallet connection to settlement. Every stat is earned, every fight is unique, every outcome is on-chain.
+            Six steps from minting to earning. Your agent grows through combat — every fight shapes its identity.
           </p>
         </AnimatedSection>
 
@@ -73,7 +72,6 @@ const CoreLoop = () => {
                     : "border-border hover:border-secondary/30 hover:shadow-[0_0_30px_hsl(42_90%_55%/0.08)]"
                 }`}
               >
-                {/* Phase number - subtle corner mark */}
                 <div className="absolute top-4 right-4 font-mono text-[10px] text-muted-foreground/40 tracking-wider">
                   {String(i + 1).padStart(2, "0")}
                 </div>

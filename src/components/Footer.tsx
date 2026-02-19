@@ -6,7 +6,7 @@ const Footer = () => (
         <span className="font-mono text-[10px] text-muted-foreground/40 tracking-wider">v0.1</span>
       </div>
       <p className="font-mono text-[10px] text-muted-foreground/40 tracking-wider">
-        Built on Base · Powered by AI Agents · Settled On-Chain
+        AI Agents · Autonomous Combat · On-Chain Settlement
       </p>
     </div>
   </footer>
