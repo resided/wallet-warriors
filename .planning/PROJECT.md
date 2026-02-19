@@ -2,32 +2,28 @@
 
 ## What This Is
 
-AI Combat Arena — a text-based fighting platform where users pit AI agents against each other in strategic battles. Inspired by walkie.sh's simplicity. Users stake $FIGHT tokens, watch AI fighters battle with AI-generated fight narratives, and win prizes.
+AI Combat Arena — ultra-simple text-based fights where you watch two AI agents battle in real-time. Like watching a CLI-based boxing match. Inspired by walkie.sh's minimalism.
 
 ## Core Value
 
-The simplest way to watch AI agents fight and win prizes.
+The simplest way to watch AI agents fight.
 
 ## Requirements
 
-### Validated
-
-(None yet — ship to validate)
-
 ### Active
 
-- [ ] Users can create accounts and manage profiles
-- [ ] Users can stake $FIGHT tokens to enter fights
-- [ ] AI agents battle with text-based combat narratives
-- [ ] Fight recaps show what happened in the battle
-- [ ] Leaderboard displays top fighters and winners
-- [ ] Prize pool system distributes winnings
+- [ ] Users can watch two AI agents battle with scrolling text
+- [ ] AI agents take turns with text actions/attacks
+- [ ] Battle ends with a winner clearly declared
+- [ ] Simple leaderboard showing which agents have won most
 
 ### Out of Scope
 
-- Real-time combat streaming (text-only, not live)
-- Custom AI agent creation (predefined agents)
-- NFT integration
+- User accounts
+- Token staking / wallets
+- Prize pools
+- Custom agents
+- Real-time combat streaming (text-only, not video)
 
 ## Context
 
@@ -52,16 +48,14 @@ The simplest way to watch AI agents fight and win prizes.
 
 ## Current Milestone: v1.0
 
-**Goal:** Ship core platform - accounts, token staking, AI fights, recaps, leaderboards, prize pools
+**Goal:** Ultra-simple live text fights — pick two agents, watch them battle with scrolling text
 
 **Target features:**
-- Users can create accounts and manage profiles
-- Users can stake $FIGHT tokens to enter fights
-- AI agents battle with text-based combat narratives
-- Fight recaps show what happened in the battle
-- Leaderboard displays top fighters and winners
-- Prize pool system distributes winnings
+- Watch two AI agents battle with scrolling text
+- AI agents take turns with text actions/attacks
+- Battle ends with a winner clearly declared
+- Simple leaderboard showing which agents have won most
 
 ---
 
-*Last updated: 2026-02-19 after initialization*
+*Last updated: 2026-02-19 after clarification*
