@@ -18,6 +18,18 @@ import {
   DEFAULT_FIGHTER,
 } from '@/types/fight';
 
+export interface GameState {
+  round: number;
+  timeRemaining: number;
+  myHealth: number;
+  myStamina: number;
+  myPosition: 'standing' | 'clinch' | 'ground_top' | 'ground_bottom';
+  oppHealth: number;
+  oppStamina: number;
+  oppPosition: 'standing' | 'clinch' | 'ground_top' | 'ground_bottom';
+  recentActions: string[];
+}
+
 export class FightEngine {
   private fight: FightState;
   private intervalId: NodeJS.Timeout | null = null;
@@ -25,6 +37,12 @@ export class FightEngine {
   private onRoundEnd: ((round: RoundState) => void) | null = null;
   private onFightEnd: ((fight: FightState) => void) | null = null;
   private tickRate: number = 1000; // 1 second per tick for real-time feel
+  
+  // LLM and CPU callbacks
+  private llmCallback?: (actor: string, target: string, gameState: GameState) => Promise<string>;
+  private cpuCallback?: (actor: string, target: string, gameState: GameState) => string;
+  private mixedMode: boolean = false;
+  private llmFighterId: string = 'fighter1'; // Which fighter uses LLM
 
   constructor(
     fighter1Stats: FighterStats,
@@ -33,12 +51,20 @@ export class FightEngine {
       onAction?: (action: FightAction) => void;
       onRoundEnd?: (round: RoundState) => void;
       onFightEnd?: (fight: FightState) => void;
+      llmCallback?: (actor: string, target: string, gameState: GameState) => Promise<string>;
+      cpuCallback?: (actor: string, target: string, gameState: GameState) => string;
+      mixedMode?: boolean;
+      llmFighterId?: string;
     }
   ) {
     this.fight = this.initializeFight(fighter1Stats, fighter2Stats);
     this.onAction = callbacks?.onAction || null;
     this.onRoundEnd = callbacks?.onRoundEnd || null;
     this.onFightEnd = callbacks?.onFightEnd || null;
+    this.llmCallback = callbacks?.llmCallback;
+    this.cpuCallback = callbacks?.cpuCallback;
+    this.mixedMode = callbacks?.mixedMode || false;
+    this.llmFighterId = callbacks?.llmFighterId || 'fighter1';
   }
 
   private initializeFight(f1: FighterStats, f2: FighterStats): FightState {
@@ -128,6 +154,27 @@ export class FightEngine {
     return { ...this.fight };
   }
 
+  // Get simplified game state for LLM/CPU context
+  getGameState(actorId: string): GameState {
+    const actor = actorId === 'fighter1' ? this.fight.fighter1 : this.fight.fighter2;
+    const target = actorId === 'fighter1' ? this.fight.fighter2 : this.fight.fighter1;
+    const currentRound = this.fight.rounds[this.fight.currentRound - 1];
+    
+    const recentActions = currentRound?.actions.slice(-3).map(a => a.description) || [];
+    
+    return {
+      round: this.fight.currentRound,
+      timeRemaining: currentRound?.timeRemaining || 0,
+      myHealth: actor.currentHealth,
+      myStamina: actor.currentStamina,
+      myPosition: actor.position,
+      oppHealth: target.currentHealth,
+      oppStamina: target.currentStamina,
+      oppPosition: target.position,
+      recentActions,
+    };
+  }
+
   // Main game loop tick - runs every second
   private tick(): void {
     const currentRound = this.fight.rounds[this.fight.currentRound - 1];
@@ -184,8 +231,30 @@ export class FightEngine {
     const actor = actingFighterId === 'fighter1' ? this.fight.fighter1 : this.fight.fighter2;
     const target = actingFighterId === 'fighter1' ? this.fight.fighter2 : this.fight.fighter1;
     
-    // AI decision making based on fighter stats and situation
-    const technique = this.selectTechnique(actor, target);
+    let technique: Technique | null = null;
+    
+    // In mixed mode, use callbacks for LLM or CPU fighters
+    if (this.mixedMode) {
+      const gameState = this.getGameState(actingFighterId);
+      
+      // Check if this fighter should use LLM
+      if (actingFighterId === this.llmFighterId && this.llmCallback) {
+        // LLM callback - async
+        return null; // Will be handled differently - we'll make generateAction async
+      }
+      
+      // Check if this fighter is CPU
+      if (actingFighterId !== this.llmFighterId && this.cpuCallback) {
+        const techniqueName = this.cpuCallback(actor.name, target.name, gameState);
+        technique = this.getTechniqueByName(techniqueName);
+      }
+    }
+    
+    // Fall back to AI decision
+    if (!technique) {
+      technique = this.selectTechnique(actor, target);
+    }
+    
     if (!technique) return null;
 
     // Calculate success probability
@@ -210,6 +279,88 @@ export class FightEngine {
       description,
       impact,
     };
+  }
+
+  // Get technique by name (for LLM/CPU callbacks)
+  private getTechniqueByName(name: string): Technique | null {
+    const allTechs = [
+      ...STRIKING_TECHNIQUES,
+      ...GRAPPLING_TECHNIQUES,
+      ...SUBMISSION_TECHNIQUES,
+      ...GROUND_TECHNIQUES,
+    ];
+    
+    // Exact match
+    let tech = allTechs.find(t => t.name.toLowerCase() === name.toLowerCase());
+    if (tech) return tech;
+    
+    // Partial match
+    tech = allTechs.find(t => t.name.toLowerCase().includes(name.toLowerCase()));
+    return tech || null;
+  }
+
+  // Generate async action for LLM fighters
+  async generateLlmAction(actingFighterId: string): Promise<FightAction | null> {
+    if (!this.llmCallback) return null;
+    
+    const actor = actingFighterId === 'fighter1' ? this.fight.fighter1 : this.fight.fighter2;
+    const target = actingFighterId === 'fighter1' ? this.fight.fighter2 : this.fight.fighter1;
+    const gameState = this.getGameState(actingFighterId);
+    
+    try {
+      const techniqueName = await this.llmCallback(actor.name, target.name, gameState);
+      const technique = this.getTechniqueByName(techniqueName);
+      
+      if (!technique) {
+        console.warn('Invalid technique from LLM:', techniqueName);
+        return null;
+      }
+      
+      const success = this.calculateSuccess(actor, target, technique);
+      const { damage, staminaCost, description, impact } = this.calculateOutcome(
+        actor, target, technique, success
+      );
+
+      return {
+        timestamp: Date.now(),
+        round: this.fight.currentRound,
+        timeRemaining: this.fight.rounds[this.fight.currentRound - 1].timeRemaining,
+        actor: actor.name,
+        target: target.name,
+        type: technique.type,
+        technique,
+        success,
+        damage,
+        staminaCost,
+        description,
+        impact,
+      };
+    } catch (error) {
+      console.error('LLM callback error:', error);
+      // Fallback to AI
+      const technique = this.selectTechnique(actor, target);
+      if (!technique) return null;
+      
+      const success = this.calculateSuccess(actor, target, technique);
+      const { damage, staminaCost, description, impact } = this.calculateOutcome(
+        actor, target, technique, success
+      );
+
+      return {
+        timestamp: Date.now(),
+        round: this.fight.currentRound,
+        timeRemaining: this.fight.rounds[this.fight.currentRound - 1].timeRemaining,
+        actor: actor.name,
+        target: target.name,
+        type: technique.type,
+        technique,
+        success,
+        damage,
+        staminaCost,
+        description,
+        impact,
+      };
+    }
   }
 
   private selectTechnique(actor: FighterState, target: FighterState): Technique | null {
@@ -362,12 +513,12 @@ export class FightEngine {
     damage *= (0.85 + Math.random() * 0.3);
 
     // Generate description
-    const descriptions = this.generateDescription(actor, target, tech, damage, impact);
+    const desc = this.generateDescription(actor, target, tech, damage, impact);
 
     return {
       damage: Math.round(damage),
       staminaCost: tech.staminaCost,
-      description,
+      description: desc,
       impact,
     };
   }

@@ -6,43 +6,164 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, Pause, RotateCcw, FastForward, SkipForward,
   Swords, Timer, MessageSquare, Trophy, Activity,
-  TrendingUp, Target, Zap, Shield, Flame
+  TrendingUp, Target, Zap, Shield, Flame, Brain
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import FightEngine from '@/engine/FightEngine';
+import { useToast } from '@/components/ui/use-toast';
+import FightEngine, { GameState } from '@/engine/FightEngine';
 import { 
   FightState, FightAction, FighterState, 
   ROUND_DURATION, DEFAULT_FIGHTER 
 } from '@/types/fight';
 import type { CompleteAgent } from '@/types/agent';
 import { saveFightRecord } from '@/lib/storage';
+import { getCpuDecision, CpuFighter, CpuDifficulty } from '@/lib/cpuOpponent';
+import { getLlmDecision, LlmConfig, mapTechniqueName } from '@/lib/llmClient';
+import { getFighterApiKey, getFighter } from '@/lib/fighterStorage';
+import {
+  STRIKING_TECHNIQUES,
+  GRAPPLING_TECHNIQUES,
+  SUBMISSION_TECHNIQUES,
+  GROUND_TECHNIQUES,
+  Technique,
+} from '@/types/fight';
 
 interface TextFightProps {
   agent1: CompleteAgent;
   agent2: CompleteAgent;
   onFightComplete?: (result: FightState) => void;
   onBack?: () => void;
+  isCpuOpponent?: boolean;
+  cpuDifficulty?: CpuDifficulty;
 }
 
-export default function TextFight({ agent1, agent2, onFightComplete, onBack }: TextFightProps) {
+export default function TextFight({ 
+  agent1, 
+  agent2, 
+  onFightComplete, 
+  onBack,
+  isCpuOpponent = false,
+  cpuDifficulty = 'medium'
+}: TextFightProps) {
+  const { toast } = useToast();
   const [fight, setFight] = useState<FightState | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [speed, setSpeed] = useState(1); // 1x, 2x, 4x
   const [actions, setActions] = useState<FightAction[]>([]);
   const [showStats, setShowStats] = useState(true);
+  const [isThinking, setIsThinking] = useState(false);
+  const [thinkingFighter, setThinkingFighter] = useState<string | null>(null);
   const engineRef = useRef<FightEngine | null>(null);
   const actionsEndRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  // Check if either agent is a CPU
+  const isAgent1Cpu = agent1.metadata.id.startsWith('cpu_');
+  const isAgent2Cpu = agent2.metadata.id.startsWith('cpu_');
+  
+  // Determine if we should use LLM for agent1 (user's fighter)
+  const useLlmForAgent1 = !isAgent1Cpu && !isAgent2Cpu; // LLM vs LLM mode
+  
+  // Create CPU callback
+  const cpuCallback = useCallback((actor: string, target: string, gameState: GameState): string => {
+    // Find CPU fighter stats
+    const cpuAgent = isAgent1Cpu ? agent1 : agent2;
+    const cpuFighter = {
+      ...agentToFighterStats(cpuAgent),
+      id: cpuAgent.metadata.id,
+      isCpu: true,
+      difficulty: cpuDifficulty,
+      position: gameState.myPosition,
+    } as CpuFighter;
+    
+    const targetStats = agentToFighterStats(isAgent1Cpu ? agent2 : agent1);
+    
+    return getCpuDecision(cpuFighter, targetStats, {
+      round: gameState.round,
+      timeRemaining: gameState.timeRemaining,
+      actorHealth: gameState.myHealth,
+      actorStamina: gameState.myStamina,
+      actorPosition: gameState.myPosition,
+      targetHealth: gameState.oppHealth,
+      targetStamina: gameState.oppStamina,
+      targetPosition: gameState.oppPosition,
+      recentActions: gameState.recentActions,
+      isWinning: gameState.myHealth > gameState.oppHealth,
+      isTired: gameState.myStamina < 30,
+      targetIsHurt: gameState.oppHealth < 40,
+    });
+  }, [agent1, agent2, isAgent1Cpu, isAgent2Cpu, cpuDifficulty]);
+  
+  // Create LLM callback for agent1
+  const llmCallback = useCallback(async (actor: string, target: string, gameState: GameState): Promise<string> => {
+    setIsThinking(true);
+    setThinkingFighter(actor);
+    
+    try {
+      // Get API key from agent1
+      const apiKey = await getFighterApiKey(agent1.metadata.id);
+      
+      if (!apiKey) {
+        // No API key - fall back to random
+        toast({
+          title: "No API Key",
+          description: "Fighter doesn't have an API key configured. Using random moves.",
+          variant: "destructive",
+        });
+        return getRandomTechnique(gameState.myPosition);
+      }
+      
+      const llmConfig: LlmConfig = {
+        provider: 'openai', // Could be stored in fighter data
+        apiKey,
+      };
+      
+      const actorStats = agentToFighterStats(agent1);
+      const targetStats = agentToFighterStats(agent2);
+      
+      const techniqueName = await getLlmDecision(actorStats, targetStats, gameState, llmConfig);
+      
+      toast({
+        title: "LLM Decision",
+        description: `Selected: ${techniqueName}`,
+        duration: 2000,
+      });
+      
+      return techniqueName;
+    } catch (error) {
+      console.error('LLM error:', error);
+      toast({
+        title: "LLM Error",
+        description: "Using fallback random technique",
+        variant: "destructive",
+      });
+      return getRandomTechnique(gameState.myPosition);
+    } finally {
+      setIsThinking(false);
+      setThinkingFighter(null);
+    }
+  }, [agent1, agent2, toast]);
 
   const initializeFight = useCallback(() => {
     // Convert agent skills to fighter stats
     const f1Stats = agentToFighterStats(agent1);
     const f2Stats = agentToFighterStats(agent2);
 
-    engineRef.current = new FightEngine(f1Stats, f2Stats, {
+    // Determine if we need mixed mode
+    const mixedMode = isCpuOpponent || isAgent1Cpu || isAgent2Cpu;
+    
+    const callbacks: {
+      onAction?: (action: FightAction) => void;
+      onRoundEnd?: (round: any) => void;
+      onFightEnd?: (fight: FightState) => void;
+      llmCallback?: (actor: string, target: string, gameState: GameState) => Promise<string>;
+      cpuCallback?: (actor: string, target: string, gameState: GameState) => string;
+      mixedMode?: boolean;
+      llmFighterId?: string;
+    } = {
       onAction: (action) => {
         setActions(prev => [...prev, action]);
         setFight(engineRef.current?.getState() || null);
@@ -64,13 +185,32 @@ export default function TextFight({ agent1, agent2, onFightComplete, onBack }: T
           time: formatTime(finalFight.endTime || 0),
           fightData: finalFight,
         });
+        toast({
+          title: finalFight.winner ? `${finalFight.winner} Wins!` : "Draw!",
+          description: `by ${finalFight.method}`,
+        });
         onFightComplete?.(finalFight);
       },
-    });
+    };
+    
+    // Add CPU callback if facing CPU opponent
+    if (mixedMode) {
+      callbacks.cpuCallback = cpuCallback;
+      callbacks.mixedMode = true;
+      callbacks.llmFighterId = 'fighter1'; // User's fighter uses LLM
+    }
+    
+    // Add LLM callback if both are user fighters
+    if (useLlmForAgent1) {
+      callbacks.llmCallback = llmCallback;
+      callbacks.mixedMode = true;
+    }
+
+    engineRef.current = new FightEngine(f1Stats, f2Stats, callbacks);
 
     setFight(engineRef.current.getState());
     setActions([]);
-  }, [agent1, agent2, onFightComplete]);
+  }, [agent1, agent2, isCpuOpponent, isAgent1Cpu, isAgent2Cpu, useLlmForAgent1, cpuCallback, llmCallback, onFightComplete, toast]);
 
   useEffect(() => {
     initializeFight();
@@ -148,6 +288,16 @@ export default function TextFight({ agent1, agent2, onFightComplete, onBack }: T
             </div>
             
             <div className="flex items-center gap-4">
+              {/* Thinking Indicator */}
+              {isThinking && (
+                <div className="flex items-center gap-2 text-primary animate-pulse">
+                  <Brain className="w-4 h-4" />
+                  <span className="text-sm font-medium">
+                    {thinkingFighter} is thinking...
+                  </span>
+                </div>
+              )}
+              
               {/* Speed Control */}
               <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
                 {[1, 2, 4].map((s) => (
@@ -546,4 +696,20 @@ function formatTime(seconds: number) {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Get random technique by position (fallback)
+function getRandomTechnique(position: string): string {
+  const allTechs = [
+    ...STRIKING_TECHNIQUES,
+    ...GRAPPLING_TECHNIQUES,
+    ...SUBMISSION_TECHNIQUES,
+    ...GROUND_TECHNIQUES,
+  ];
+  
+  const available = allTechs.filter(t => t.position.includes(position as any));
+  if (available.length === 0) {
+    return allTechs[Math.floor(Math.random() * allTechs.length)].name;
+  }
+  return available[Math.floor(Math.random() * available.length)].name;
 }
