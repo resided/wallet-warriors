@@ -10,41 +10,70 @@ The simplest way to watch AI agents fight.
 
 ## Phases
 
-- [ ] **Phase 1: Live Combat** - Watch two AI agents battle with scrolling text
-- [ ] **Phase 2: Leaderboard** - Track which agents have won
+- [ ] **Phase 1: Fighter Registration** - Register AI agent, allocate stats
+- [ ] **Phase 2: Combat System** - CPU battles with real-time text
+- [ ] **Phase 3: Leaderboard & Social** - Rankings, sharing, voting
 
 ## Phase Details
 
-### Phase 1: Live Combat
+### Phase 1: Fighter Registration
 
-**Goal:** Users can select two AI agents and watch them battle with real-time scrolling text
+**Goal:** Users can register their AI agent with name, API key, and stat allocation
 
 **Depends on:** Nothing (first phase)
 
-**Requirements:** COMB-01, COMB-02, COMB-03, COMB-04, COMB-05
+**Requirements:** REGI-01, REGI-02, REGI-03, REGI-04, STAT-01, STAT-02, STAT-03, STAT-04
 
 **Success Criteria** (what must be TRUE):
-1. User can pick two AI agents from a dropdown/list
-2. Agents take turns with text actions (attack, defend, etc)
-3. Text appears on screen as the battle unfolds (scrolling)
-4. Battle ends with a clear winner announced
-5. Full battle log persists and can be viewed after
+1. User can register fighter with name
+2. User can provide and store API key securely
+3. Fighter saved to database
+4. User can view list of their fighters
+5. User can allocate points to Power/Speed/Defense/Stamina
+6. Points pool is limited (can't max everything)
+7. Stats affect battle outcomes
+8. User can edit fighter stats
 
 **Plans:** TBD
 
 ---
 
-### Phase 2: Leaderboard
+### Phase 2: Combat System
 
-**Goal:** Show which agents have won the most fights
+**Goal:** Users can fight their agent against CPU and watch real-time text battle
 
 **Depends on:** Phase 1
 
-**Requirements:** LEAD-01, LEAD-02
+**Requirements:** CPU-01, CPU-02, CPU-03, CPU-04, CPU-05, CPU-06, CPU-07, PRIZ-01
 
 **Success Criteria** (what must be TRUE):
-1. Leaderboard displays agents sorted by win count
-2. Each agent shows their total wins
+1. User can start fight against CPU
+2. User's LLM receives battle state and decides moves
+3. CPU makes basic decisions
+4. Turn-based with text actions
+5. Text scrolls on screen in real-time
+6. Clear winner declared at end
+7. Full battle log saved and viewable
+8. Winner receives $FIGHT (manual)
+
+**Plans:** TBD
+
+---
+
+### Phase 3: Leaderboard & Social
+
+**Goal:** Show rankings and let users share/vote on fights
+
+**Depends on:** Phase 2
+
+**Requirements:** LEAD-01, LEAD-02, SOCL-01, SOCL-02, SOCL-03
+
+**Success Criteria** (what must be TRUE):
+1. Leaderboard shows fighters ranked by wins
+2. Win count displayed for each fighter
+3. User can share fight recap to X (Twitter)
+4. Users can vote on most entertaining fight
+5. Entertaining fights earn bonus $FIGHT
 
 **Plans:** TBD
 
@@ -54,9 +83,10 @@ The simplest way to watch AI agents fight.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Live Combat | 0/1 | Not started | - |
-| 2. Leaderboard | 0/1 | Not started | - |
+| 1. Fighter Registration | 0/1 | Not started | - |
+| 2. Combat System | 0/1 | Not started | - |
+| 3. Leaderboard & Social | 0/1 | Not started | - |
 
 ---
 
-*Last updated: 2026-02-19 simplified scope*
+*Last updated: 2026-02-19*
