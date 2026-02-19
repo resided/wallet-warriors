@@ -2,60 +2,74 @@
 
 ## What This Is
 
-AI Combat Arena — ultra-simple text-based fights where you watch two AI agents battle in real-time. Like watching a CLI-based boxing match. Inspired by walkie.sh's minimalism.
+AI Combat Arena — ClawHub skill + web app where users register AI agents as fighters, allocate stat points, and watch them battle. Inspired by molt.chess and ClawArena.
 
 ## Core Value
 
 The simplest way to watch AI agents fight.
 
+## Architecture
+
+- **ClawHub Skill** (`clawdhub install fightbook`) — Commands for your AI agent
+- **Web App** (fightbook-chi.vercel.app) — Stores fighters, runs battles, shows leaderboards
+
 ## Requirements
 
 ### Active
 
-- [ ] Users can watch two AI agents battle with scrolling text
-- [ ] AI agents take turns with text actions/attacks
-- [ ] Battle ends with a winner clearly declared
-- [ ] Simple leaderboard showing which agents have won most
+- Users can register their AI agent as a fighter with name + API key
+- Users allocate stat points (Power, Speed, Defense, Stamina) — limited pool, can't max everything
+- Users can fight against CPU opponent
+- Watch two LLMs battle with real-time scrolling text
+- Battle ends with clear winner
+- Leaderboard shows fighters ranked by wins
+- $FIGHT token awarded to winner (manual for now)
+- Share fight recaps to X
+- Vote on most entertaining fights, earn bonus $FIGHT
 
 ### Out of Scope
 
-- User accounts
-- Token staking / wallets
-- Prize pools
-- Custom agents
-- Real-time combat streaming (text-only, not video)
+- PvP matchmaking (CPU only for v1)
+- User accounts (agent-based, not user-based)
+- Token staking / wallets (manual prize for now)
+- Tournaments / seasons
 
 ## Context
 
-- Existing codebase at https://fightbook-chi.vercel.app/ (deployed Vercel app)
-- Text-based (not visual) AI fights
-- Token-based economy with $FIGHT
-- Design inspired by walkie.sh simplicity
+- Existing codebase at https://fightbook-chi.vercel.app/
+- Text-based AI fights
+- OpenClaw ecosystem compatible
+- Design inspired by walkie.sh minimalism
 
 ## Constraints
 
 - **Stack**: TypeScript, Vite, React, Tailwind CSS (existing)
-- **Simplicity**: Follow walkie.sh minimal aesthetic
-- **Token**: $FIGHT ERC-20 token for staking/prizes
+- **Simplicity**: Minimal, like CLI output
+- **LLM**: User provides API key (OpenAI/Anthropic)
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Text-based fights | Simpler to generate, matches walkie.sh style | — Pending |
-| $FIGHT token economy | Creates engagement and stakes | — Pending |
+| Stat allocation | Prevents "win at all costs" - tradeoffs required | — Pending |
+| CPU first | No users yet, single player vs AI | — Pending |
+| $FIGHT manual | No complex tokenomics yet, just give to winner | — Pending |
+
 ---
 
 ## Current Milestone: v1.0
 
-**Goal:** Ultra-simple live text fights — pick two agents, watch them battle with scrolling text
+**Goal:** Core fighting system — register fighter, allocate stats, fight CPU, see leaderboard
 
 **Target features:**
-- Watch two AI agents battle with scrolling text
-- AI agents take turns with text actions/attacks
-- Battle ends with a winner clearly declared
-- Simple leaderboard showing which agents have won most
+- Register AI agent with name + API key
+- Allocate stat points (Power/Speed/Defense/Stamina)
+- Fight CPU opponent
+- Real-time scrolling text battle
+- Winner declared, $FIGHT awarded
+- Leaderboard by wins
+- Share to X, vote on entertaining fights
 
 ---
 
-*Last updated: 2026-02-19 after clarification*
+*Last updated: 2026-02-19 architecture defined*
