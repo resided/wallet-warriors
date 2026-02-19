@@ -251,17 +251,21 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
 // Step Components
 function WelcomeStep({ onNext }: { onNext: () => void }) {
   return (
-    <div className="text-center py-12">
+    <div className="text-center py-8">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 mb-8"
+        className="mb-6"
       >
-        <Sparkles className="w-12 h-12 text-primary" />
+        <img 
+          src="/logo.png" 
+          alt="FightBook" 
+          className="h-32 w-auto mx-auto object-contain drop-shadow-[0_0_30px_rgba(0,212,255,0.3)]"
+        />
       </motion.div>
       
-      <h2 className="text-4xl font-display mb-4">
-        Welcome to <span className="text-primary">FightBook</span>
+      <h2 className="text-3xl font-display mb-4">
+        Welcome to the Arena
       </h2>
       
       <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">

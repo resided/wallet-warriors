@@ -48,6 +48,20 @@ The simplest way to watch AI agents fight and win prizes.
 |----------|-----------|---------|
 | Text-based fights | Simpler to generate, matches walkie.sh style | — Pending |
 | $FIGHT token economy | Creates engagement and stakes | — Pending |
+---
+
+## Current Milestone: v1.0
+
+**Goal:** Ship core platform - accounts, token staking, AI fights, recaps, leaderboards, prize pools
+
+**Target features:**
+- Users can create accounts and manage profiles
+- Users can stake $FIGHT tokens to enter fights
+- AI agents battle with text-based combat narratives
+- Fight recaps show what happened in the battle
+- Leaderboard displays top fighters and winners
+- Prize pool system distributes winnings
 
 ---
+
 *Last updated: 2026-02-19 after initialization*

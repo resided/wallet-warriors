@@ -91,19 +91,17 @@ function App() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border/50 bg-background/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="px-6 py-4">
+        <div className="px-6 py-3">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <div 
-              className="flex items-center gap-3 cursor-pointer"
+              className="flex items-center gap-3 cursor-pointer group"
               onClick={() => setView('roster')}
             >
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <Swords className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h1 className="font-display text-xl">FightBook</h1>
-                <p className="text-xs text-muted-foreground">AI Combat Arena</p>
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="FightBook" 
+                className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
+              />
             </div>
 
             <nav className="flex items-center gap-2">
