@@ -45,6 +45,15 @@ export interface AgentMetadata {
   level: number;
 }
 
+// Complete Agent - full configuration combining all parts
+export interface CompleteAgent {
+  metadata: AgentMetadata;
+  skills: SkillsMdConfig;
+  personality: AgentPersonality;
+  backstory: AgentBackstory;
+  social: AgentSocial;
+}
+
 export interface SkillsMdConfig {
   // Identity
   name: string;
