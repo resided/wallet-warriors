@@ -20,6 +20,7 @@ import {
 } from '@/types/fight';
 import type { CompleteAgent } from '@/types/agent';
 import { saveFightRecord } from '@/lib/storage';
+import { saveFightToDb } from '@/lib/fightStorage';
 import { getCpuDecision, CpuFighter, CpuDifficulty } from '@/lib/cpuOpponent';
 import { getLlmDecision, LlmConfig, mapTechniqueName } from '@/lib/llmClient';
 import { getFighterApiKey, getFighter } from '@/lib/fighterStorage';
@@ -174,6 +175,8 @@ export default function TextFight({
       onFightEnd: (finalFight) => {
         setIsRunning(false);
         setFight(finalFight);
+        
+        // Save to localStorage (always)
         saveFightRecord({
           id: finalFight.id,
           timestamp: Date.now(),
@@ -185,6 +188,23 @@ export default function TextFight({
           time: formatTime(finalFight.endTime || 0),
           fightData: finalFight,
         });
+        
+        // Also try to save to database (Supabase)
+        saveFightToDb(agent1, agent2, finalFight)
+          .then(() => {
+            toast({
+              title: "Fight Saved!",
+              description: "Fight saved to database.",
+            });
+          })
+          .catch((err) => {
+            console.error('Failed to save to database:', err);
+            toast({
+              title: "Fight Saved (Local)",
+              description: "Saved to browser storage only.",
+            });
+          });
+        
         toast({
           title: finalFight.winner ? `${finalFight.winner} Wins!` : "Draw!",
           description: `by ${finalFight.method}`,
