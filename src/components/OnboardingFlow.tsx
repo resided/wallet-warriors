@@ -113,18 +113,21 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
   const CurrentStepIcon = STEPS[currentStep].icon;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-black flex flex-col">
+      {/* Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/10 via-black to-black" />
+      </div>
+      
       {/* Header Progress */}
-      <div className="border-b border-border/50 px-6 py-4">
+      <div className="border-b border-zinc-800 px-6 py-4 bg-black/80 backdrop-blur-sm relative z-10">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <Swords className="w-5 h-5 text-white" />
-              </div>
+              <img src="/logo.png" alt="" className="h-10 w-auto" />
               <div>
-                <h1 className="font-display text-lg">Create Your Agent</h1>
-                <p className="text-xs text-muted-foreground">Step {currentStep + 1} of {STEPS.length}</p>
+                <h1 className="font-display text-lg text-white">Create Your Agent</h1>
+                <p className="text-xs text-zinc-500">Step {currentStep + 1} of {STEPS.length}</p>
               </div>
             </div>
             {onSkip && (
@@ -140,14 +143,14 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
               <div key={step.id} className="flex-1 flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
                   index <= currentStep 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-muted text-muted-foreground'
+                    ? 'bg-orange-500 text-black' 
+                    : 'bg-zinc-800 text-zinc-500'
                 }`}>
                   {index < currentStep ? <Check className="w-4 h-4" /> : index + 1}
                 </div>
                 {index < STEPS.length - 1 && (
                   <div className={`flex-1 h-1 rounded-full transition-colors ${
-                    index < currentStep ? 'bg-primary' : 'bg-muted'
+                    index < currentStep ? 'bg-orange-500' : 'bg-zinc-800'
                   }`} />
                 )}
               </div>
@@ -251,51 +254,75 @@ export default function OnboardingFlow({ onComplete, onSkip }: OnboardingFlowPro
 // Step Components
 function WelcomeStep({ onNext }: { onNext: () => void }) {
   return (
-    <div className="text-center py-8">
+    <div className="text-center py-6">
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
+        initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         className="mb-6"
       >
         <img 
-          src="/logo.png" 
+          src="/hero-logo.png" 
           alt="FightBook" 
-          className="h-32 w-auto mx-auto object-contain drop-shadow-[0_0_30px_rgba(0,212,255,0.3)]"
+          className="w-full max-w-lg mx-auto object-contain drop-shadow-[0_0_60px_rgba(168,85,247,0.3)]"
         />
       </motion.div>
       
-      <h2 className="text-3xl font-display mb-4">
+      <motion.h2 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="text-2xl font-display mb-4 text-white"
+      >
         Welcome to the Arena
-      </h2>
+      </motion.h2>
       
-      <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-        Create your AI fighter using the skills.md format. Define their abilities, 
-        personality, and fighting style. Then watch them battle in real-time against 
-        other agents.
-      </p>
+      <motion.p 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-lg text-zinc-400 max-w-2xl mx-auto mb-8"
+      >
+        Create your AI fighter using skills.md. Define their abilities, 
+        then watch them battle in real-time.
+      </motion.p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-8"
+      >
         <FeatureCard 
           icon={Target}
           title="Configure Skills"
-          description="Set 25+ attributes from striking power to fight IQ"
+          description="25+ attributes from striking power to fight IQ"
         />
         <FeatureCard 
           icon={Brain}
-          title="Define Personality"
-          description="Choose attitude, quotes, and fighting philosophy"
+          title="Define Style"
+          description="Archetype, attitude, fighting philosophy"
         />
         <FeatureCard 
           icon={Swords}
           title="Watch Them Fight"
-          description="3-minute rounds with authentic MMA techniques"
+          description="3-minute rounds with authentic MMA"
         />
-      </div>
+      </motion.div>
 
-      <Button size="lg" onClick={onNext}>
-        Get Started
-        <ChevronRight className="w-4 h-4 ml-2" />
-      </Button>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
+        <Button 
+          size="lg" 
+          onClick={onNext}
+          className="bg-orange-500 hover:bg-orange-400 text-black font-bold"
+        >
+          Get Started
+          <ChevronRight className="w-4 h-4 ml-2" />
+        </Button>
+      </motion.div>
     </div>
   );
 }
@@ -701,17 +728,17 @@ function ReviewStep({
 // Helper Components
 function FeatureCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
   return (
-    <div className="bg-card border border-border/50 rounded-xl p-6 text-left">
-      <Icon className="w-8 h-8 text-primary mb-4" />
-      <h3 className="font-display text-lg mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground">{description}</p>
+    <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6 text-left hover:border-orange-500/30 transition-colors">
+      <Icon className="w-8 h-8 text-orange-500 mb-4" />
+      <h3 className="font-display text-lg mb-2 text-white">{title}</h3>
+      <p className="text-sm text-zinc-400">{description}</p>
     </div>
   );
 }
 
 function SkillSection({ title, icon: Icon, color, children }: { title: string, icon: any, color: string, children: React.ReactNode }) {
   return (
-    <div className="bg-card border border-border/50 rounded-xl p-6">
+    <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6">
       <h3 className={`font-display text-lg mb-4 flex items-center gap-2 ${color}`}>
         <Icon className="w-5 h-5" />
         {title}
@@ -727,8 +754,8 @@ function StatSlider({ label, value, onChange }: { label: string, value: number, 
   return (
     <div className="space-y-2">
       <div className="flex justify-between">
-        <label className="text-sm">{label}</label>
-        <span className="text-sm font-mono font-bold">{value}</span>
+        <label className="text-sm text-zinc-300">{label}</label>
+        <span className="text-sm font-mono font-bold text-white">{value}</span>
       </div>
       <Slider
         value={[value]}
@@ -743,9 +770,9 @@ function StatSlider({ label, value, onChange }: { label: string, value: number, 
 
 function StatBox({ label, value }: { label: string, value: number }) {
   return (
-    <div className="bg-background/50 rounded-lg p-3">
-      <div className="text-2xl font-display">{value}</div>
-      <div className="text-xs text-muted-foreground uppercase tracking-wider">{label}</div>
+    <div className="bg-zinc-950 rounded-lg p-3">
+      <div className="text-2xl font-display text-white">{value}</div>
+      <div className="text-xs text-zinc-500 uppercase tracking-wider">{label}</div>
     </div>
   );
 }

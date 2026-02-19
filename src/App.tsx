@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { CompleteAgent } from '@/types/agent';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Swords, Loader2 } from 'lucide-react';
+import { Swords, Loader2, Plus, Users } from 'lucide-react';
 import OnboardingFlow from '@/components/OnboardingFlow';
 import AgentRoster from '@/components/AgentRoster';
 import TextFight from '@/components/TextFight';
 import SkillsEditor from '@/components/SkillsEditor';
+import Landing from '@/pages/Landing';
 import { 
   isOnboardingComplete, 
   setOnboardingComplete,
@@ -14,11 +15,11 @@ import {
   setCurrentAgent,
 } from '@/lib/storage';
 
-type View = 'roster' | 'create' | 'edit' | 'fight' | 'profile';
+type View = 'landing' | 'roster' | 'create' | 'edit' | 'fight' | 'profile';
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<View>('roster');
+  const [view, setView] = useState<View>('landing');
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [currentAgent, setCurrentAgentState] = useState<CompleteAgent | null>(null);
   const [editingAgent, setEditingAgent] = useState<CompleteAgent | null>(null);
@@ -34,6 +35,14 @@ function App() {
     setCurrentAgentState(current);
     setLoading(false);
   }, []);
+
+  const handleEnter = () => {
+    if (hasCompletedOnboarding) {
+      setView('roster');
+    } else {
+      setView('create');
+    }
+  };
 
   const handleOnboardingComplete = (agent: CompleteAgent) => {
     setOnboardingComplete(true);
@@ -55,7 +64,6 @@ function App() {
   const handleSelectAgent = (agent: CompleteAgent) => {
     setCurrentAgent(agent);
     setCurrentAgentState(agent);
-    // Could show profile view here
   };
 
   const handleFight = (agent1: CompleteAgent, agent2: CompleteAgent) => {
@@ -64,21 +72,25 @@ function App() {
   };
 
   const handleFightComplete = () => {
-    // Refresh agent data after fight
     const current = getCurrentAgent();
     setCurrentAgentState(current);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
       </div>
     );
   }
 
-  // Show onboarding if not completed
-  if (!hasCompletedOnboarding) {
+  // Landing Page
+  if (view === 'landing') {
+    return <Landing onEnter={handleEnter} />;
+  }
+
+  // Onboarding
+  if (!hasCompletedOnboarding && view === 'create') {
     return (
       <OnboardingFlow 
         onComplete={handleOnboardingComplete}
@@ -88,13 +100,13 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="border-b border-border/50 bg-background/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="px-6 py-3">
+      <header className="border-b border-zinc-800 bg-black/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="px-6 py-4">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <div 
-              className="flex items-center gap-3 cursor-pointer group"
+              className="flex items-center gap-4 cursor-pointer group"
               onClick={() => setView('roster')}
             >
               <img 
@@ -107,19 +119,21 @@ function App() {
             <nav className="flex items-center gap-2">
               <button
                 onClick={() => setView('roster')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   view === 'roster' 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-orange-500 text-black' 
+                    : 'text-zinc-400 hover:text-white'
                 }`}
               >
+                <Users className="w-4 h-4" />
                 Roster
               </button>
               <button
                 onClick={handleCreateAgent}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-muted hover:bg-muted/80 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-zinc-800 hover:bg-zinc-700 text-white transition-colors"
               >
-                + New Agent
+                <Plus className="w-4 h-4" />
+                New Agent
               </button>
             </nav>
           </div>
@@ -198,13 +212,11 @@ function App() {
   );
 }
 
-// Create Agent View (Simplified version of onboarding)
+// Create Agent View
 function CreateAgentView({ onComplete, onCancel }: { onComplete: () => void; onCancel: () => void }) {
-  const [step, setStep] = useState(0);
   const [agent, setAgent] = useState<CompleteAgent | null>(null);
 
   useEffect(() => {
-    // Create new agent
     const newAgent: CompleteAgent = {
       metadata: {
         id: `agent_${Date.now()}_${Math.random().toString(36).substring(7)}`,
@@ -285,7 +297,6 @@ function CreateAgentView({ onComplete, onCancel }: { onComplete: () => void; onC
   const handleSave = () => {
     if (!agent) return;
     
-    // Update name from skills
     const finalAgent = {
       ...agent,
       metadata: {
@@ -294,7 +305,6 @@ function CreateAgentView({ onComplete, onCancel }: { onComplete: () => void; onC
       },
     };
     
-    // Save to storage
     const agents = getAllAgents();
     agents.push(finalAgent);
     localStorage.setItem('fightbook_agents', JSON.stringify(agents));
@@ -307,17 +317,16 @@ function CreateAgentView({ onComplete, onCancel }: { onComplete: () => void; onC
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-display">Create New Agent</h2>
-        <button onClick={onCancel} className="text-muted-foreground hover:text-foreground">
+        <h2 className="text-3xl font-display text-white">Create New Agent</h2>
+        <button onClick={onCancel} className="text-zinc-400 hover:text-white">
           Cancel
         </button>
       </div>
 
-      <div className="bg-card border border-border/50 rounded-xl p-6 space-y-6">
-        {/* Name */}
+      <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-sm font-medium mb-2 block">Name</label>
+            <label className="text-sm font-medium text-zinc-400 mb-2 block">Name</label>
             <input
               type="text"
               value={agent.skills.name}
@@ -325,12 +334,12 @@ function CreateAgentView({ onComplete, onCancel }: { onComplete: () => void; onC
                 ...agent,
                 skills: { ...agent.skills, name: e.target.value }
               })}
-              className="w-full p-3 rounded-lg border border-border bg-background"
+              className="w-full p-3 rounded-lg border border-zinc-800 bg-black text-white"
               placeholder="Fighter name..."
             />
           </div>
           <div>
-            <label className="text-sm font-medium mb-2 block">Nickname</label>
+            <label className="text-sm font-medium text-zinc-400 mb-2 block">Nickname</label>
             <input
               type="text"
               value={agent.skills.nickname}
@@ -338,17 +347,15 @@ function CreateAgentView({ onComplete, onCancel }: { onComplete: () => void; onC
                 ...agent,
                 skills: { ...agent.skills, nickname: e.target.value }
               })}
-              className="w-full p-3 rounded-lg border border-border bg-background"
+              className="w-full p-3 rounded-lg border border-zinc-800 bg-black text-white"
               placeholder="The..."
             />
           </div>
         </div>
 
-        {/* Skills Editor */}
         <SkillsEditor
           value={generateSkillsMd(agent)}
           onChange={(md) => {
-            // Parse and update
             const lines = md.split('\n');
             const newSkills = { ...agent.skills };
             lines.forEach(line => {
@@ -375,17 +382,16 @@ function CreateAgentView({ onComplete, onCancel }: { onComplete: () => void; onC
           }}
         />
 
-        {/* Actions */}
-        <div className="flex justify-end gap-2 pt-4 border-t border-border/50">
+        <div className="flex justify-end gap-2 pt-4 border-t border-zinc-800">
           <button
             onClick={onCancel}
-            className="px-4 py-2 rounded-lg border border-border hover:bg-muted transition-colors"
+            className="px-4 py-2 rounded-lg border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="px-4 py-2 rounded-lg bg-orange-500 text-black font-medium hover:bg-orange-400 transition-colors"
           >
             Create Agent
           </button>
@@ -419,17 +425,16 @@ function EditAgentView({ agent, onComplete, onCancel }: { agent: CompleteAgent; 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-display">Edit Agent</h2>
-        <button onClick={onCancel} className="text-muted-foreground hover:text-foreground">
+        <h2 className="text-3xl font-display text-white">Edit Agent</h2>
+        <button onClick={onCancel} className="text-zinc-400 hover:text-white">
           Cancel
         </button>
       </div>
 
-      <div className="bg-card border border-border/50 rounded-xl p-6 space-y-6">
-        {/* Name */}
+      <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-sm font-medium mb-2 block">Name</label>
+            <label className="text-sm font-medium text-zinc-400 mb-2 block">Name</label>
             <input
               type="text"
               value={editedAgent.skills.name}
@@ -437,11 +442,11 @@ function EditAgentView({ agent, onComplete, onCancel }: { agent: CompleteAgent; 
                 ...editedAgent,
                 skills: { ...editedAgent.skills, name: e.target.value }
               })}
-              className="w-full p-3 rounded-lg border border-border bg-background"
+              className="w-full p-3 rounded-lg border border-zinc-800 bg-black text-white"
             />
           </div>
           <div>
-            <label className="text-sm font-medium mb-2 block">Nickname</label>
+            <label className="text-sm font-medium text-zinc-400 mb-2 block">Nickname</label>
             <input
               type="text"
               value={editedAgent.skills.nickname}
@@ -449,16 +454,14 @@ function EditAgentView({ agent, onComplete, onCancel }: { agent: CompleteAgent; 
                 ...editedAgent,
                 skills: { ...editedAgent.skills, nickname: e.target.value }
               })}
-              className="w-full p-3 rounded-lg border border-border bg-background"
+              className="w-full p-3 rounded-lg border border-zinc-800 bg-black text-white"
             />
           </div>
         </div>
 
-        {/* Skills Editor */}
         <SkillsEditor
           value={generateSkillsMd(editedAgent)}
           onChange={(md) => {
-            // Parse and update (simplified)
             const lines = md.split('\n');
             const newSkills = { ...editedAgent.skills };
             lines.forEach(line => {
@@ -484,17 +487,16 @@ function EditAgentView({ agent, onComplete, onCancel }: { agent: CompleteAgent; 
           }}
         />
 
-        {/* Actions */}
-        <div className="flex justify-end gap-2 pt-4 border-t border-border/50">
+        <div className="flex justify-end gap-2 pt-4 border-t border-zinc-800">
           <button
             onClick={onCancel}
-            className="px-4 py-2 rounded-lg border border-border hover:bg-muted transition-colors"
+            className="px-4 py-2 rounded-lg border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="px-4 py-2 rounded-lg bg-orange-500 text-black font-medium hover:bg-orange-400 transition-colors"
           >
             Save Changes
           </button>
