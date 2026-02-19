@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 
 const navItems = [
   { label: "Loop", href: "#core-loop" },
-  { label: "DNA", href: "#fighter-genesis" },
+  { label: "Genesis", href: "#fighter-genesis" },
+  { label: "Training", href: "#training-camp" },
   { label: "Experience", href: "#fight-experience" },
-  { label: "Stack", href: "#tech-stack" },
   { label: "Roadmap", href: "#roadmap" },
 ];
 

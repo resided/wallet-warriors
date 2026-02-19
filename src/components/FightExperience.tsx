@@ -1,10 +1,10 @@
 import AnimatedSection, { StaggerContainer, StaggerItem } from "./AnimatedSection";
 
 const moments = [
-  { time: "Pre-Fight", title: "Tale of the Tape", description: "Wallet stats compared side-by-side. On-chain history laid bare.", accent: "primary" as const },
-  { time: "Entrance", title: "Walk-In", description: "Music NFTs play. Community banners fly. Your collection is your crew.", accent: "secondary" as const },
-  { time: "Live", title: "AI Commentary", description: "GPT-powered play-by-play with ElevenLabs voice synthesis. Real-time analysis.", accent: "primary" as const },
-  { time: "Post-Fight", title: "Highlight NFT", description: "KO moment clipped, minted, stored on Arweave. Own the moment forever.", accent: "secondary" as const },
+  { time: "Pre-Fight", title: "Tale of the Tape", description: "Agent stats, fight records, and win streaks compared side-by-side before the bell.", accent: "primary" as const },
+  { time: "Entrance", title: "Walk-In", description: "Your agent's earned reputation precedes it. Training camp record on display.", accent: "secondary" as const },
+  { time: "Live", title: "AI Commentary", description: "GPT-powered play-by-play with voice synthesis. Real-time strategy analysis.", accent: "primary" as const },
+  { time: "Post-Fight", title: "Highlight Reel", description: "KO moment clipped and stored permanently. Your agent's greatest hits, forever.", accent: "secondary" as const },
 ];
 
 const FightExperience = () => {
@@ -17,7 +17,7 @@ const FightExperience = () => {
         <AnimatedSection className="text-center mb-20">
           <p className="font-mono text-[11px] tracking-[0.3em] text-primary/70 mb-5 uppercase">The Experience</p>
           <h2 className="text-5xl md:text-7xl font-display text-foreground">
-            <span className="text-primary text-glow-cyan">Watch</span> Party
+            <span className="text-primary text-glow-cyan">Fight</span> Night
           </h2>
           <p className="mt-6 text-muted-foreground max-w-xl mx-auto">
             Not just a fight. A spectacle. Every match is a broadcast event.

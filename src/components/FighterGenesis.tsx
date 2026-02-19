@@ -1,13 +1,16 @@
 import { motion } from "framer-motion";
 import AnimatedSection, { StaggerContainer, StaggerItem } from "./AnimatedSection";
 
-const stats = [
-  { label: "Wallet Age", stat: "Stamina / Chin", description: "Older wallets produce tougher fighters with iron chins" },
-  { label: "TX Frequency", stat: "Hand Speed", description: "High-frequency traders throw combinations faster" },
-  { label: "Volume Moved", stat: "Power", description: "Whale wallets hit harder — knockout potential scales with TVL" },
-  { label: "Protocol Diversity", stat: "Fight IQ", description: "DeFi + NFT + DAO interaction = technical versatility" },
-  { label: "REKT Events", stat: "Scar Tissue", description: "Liquidations and losses build damage resistance" },
-  { label: "NFT Holdings", stat: "Corner Team", description: "Your community becomes your ringside crew" },
+const veteranStats = [
+  { label: "Wallet Age", stat: "Stamina Floor", description: "Older wallets give your agent a tougher baseline chin" },
+  { label: "TX Frequency", stat: "Speed Bonus", description: "High-frequency history unlocks faster combination potential" },
+  { label: "Volume Moved", stat: "Power Floor", description: "Whale wallets start with higher knockout potential" },
+];
+
+const prospectStats = [
+  { label: "skills.md", stat: "Fighting Style", description: "Define your agent's stance, aggression, and strategy bias in a simple config" },
+  { label: "Fight Record", stat: "Earned Stats", description: "Every bout compounds into permanent attributes — wins build power, losses build chin" },
+  { label: "Training Camp", stat: "Accelerated Growth", description: "Run paid simulations to develop your prospect faster against NPC sparring partners" },
 ];
 
 const FighterGenesis = () => {
@@ -18,44 +21,97 @@ const FighterGenesis = () => {
 
       <div className="max-w-6xl mx-auto relative">
         <AnimatedSection className="text-center mb-20">
-          <p className="font-mono text-[11px] tracking-[0.3em] text-secondary/70 mb-5 uppercase">Fighter Mint</p>
+          <p className="font-mono text-[11px] tracking-[0.3em] text-secondary/70 mb-5 uppercase">Two Paths, One Ring</p>
           <h2 className="text-5xl md:text-7xl font-display text-foreground">
-            Your Wallet Is Your <span className="text-secondary text-glow-gold">DNA</span>
+            How Your Agent Is <span className="text-secondary text-glow-gold">Born</span>
           </h2>
           <p className="mt-6 text-muted-foreground max-w-xl mx-auto">
-            No randomness. No pay-to-win. Your fighter's stats are archaeologically mined from your on-chain history.
+            Connect a wallet for a head start, or mint a fresh prospect and let combat forge the identity. No pay-to-win — just different starting lines.
           </p>
         </AnimatedSection>
 
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {stats.map((item, i) => (
-            <StaggerItem key={i}>
-              <div className="group relative bg-card-gradient border border-border rounded-lg p-6 hover:border-secondary/25 hover:-translate-y-0.5 transition-all duration-500 hover:shadow-[0_0_30px_hsl(42_90%_55%/0.06)]">
-                <div className="flex items-start justify-between mb-5">
-                  {/* Geometric accent instead of emoji */}
-                  <div className="w-8 h-8 rounded-sm border border-secondary/15 bg-secondary/5 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-secondary/40" />
-                  </div>
-                  <span className="font-mono text-[10px] text-muted-foreground/50 tracking-wider uppercase">
-                    {item.label}
-                  </span>
-                </div>
-                <h3 className="text-xl font-display text-secondary/90 mb-2">{item.stat}</h3>
-                <p className="text-sm text-muted-foreground/80 leading-relaxed">{item.description}</p>
-
-                {/* Subtle bar indicator */}
-                <motion.div
-                  className="mt-5 h-px bg-gradient-to-r from-secondary/20 to-transparent"
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                  style={{ transformOrigin: "left" }}
-                />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Veteran Path */}
+          <AnimatedSection delay={0.1}>
+            <div className="border border-primary/15 rounded-lg p-8 bg-card-gradient h-full">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-2 h-2 rounded-full bg-primary/60" />
+                <p className="font-mono text-[10px] tracking-[0.3em] text-primary/60 uppercase">Wallet Veteran</p>
               </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+              <h3 className="text-3xl font-display text-foreground mb-2">Boosted Genesis</h3>
+              <p className="text-sm text-muted-foreground/60 mb-8">Connect your wallet. On-chain history sets your agent's stat floor — not ceiling.</p>
+              
+              <div className="space-y-4">
+                {veteranStats.map((item, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-sm border border-primary/15 bg-primary/5 flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary/50" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-mono text-[10px] text-muted-foreground/40 tracking-wider uppercase">{item.label}</span>
+                        <span className="text-[10px] text-primary/40">→</span>
+                        <span className="font-display text-base text-primary/80">{item.stat}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground/60 leading-relaxed">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </AnimatedSection>
+
+          {/* Prospect Path */}
+          <AnimatedSection delay={0.2}>
+            <div className="border border-secondary/15 rounded-lg p-8 bg-card-gradient h-full">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-2 h-2 rounded-full bg-secondary/60" />
+                <p className="font-mono text-[10px] tracking-[0.3em] text-secondary/60 uppercase">Fresh Prospect</p>
+              </div>
+              <h3 className="text-3xl font-display text-foreground mb-2">Earned Identity</h3>
+              <p className="text-sm text-muted-foreground/60 mb-8">No wallet needed. Your agent starts raw and builds reputation through combat.</p>
+              
+              <div className="space-y-4">
+                {prospectStats.map((item, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-sm border border-secondary/15 bg-secondary/5 flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary/50" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-mono text-[10px] text-muted-foreground/40 tracking-wider uppercase">{item.label}</span>
+                        <span className="text-[10px] text-secondary/40">→</span>
+                        <span className="font-display text-base text-secondary/80">{item.stat}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground/60 leading-relaxed">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+
+        {/* skills.md callout */}
+        <AnimatedSection delay={0.3} className="mt-6">
+          <div className="border border-border rounded-lg p-6 md:p-8 bg-card-gradient">
+            <div className="flex flex-col md:flex-row md:items-center gap-6">
+              <div className="shrink-0">
+                <div className="font-mono text-sm text-primary/70 bg-primary/5 border border-primary/10 rounded-md px-4 py-2">
+                  skills.md
+                </div>
+              </div>
+              <div>
+                <h4 className="text-xl font-display text-foreground mb-1">Configure, Don't Code</h4>
+                <p className="text-sm text-muted-foreground/60 leading-relaxed">
+                  Define your agent's personality in a simple markdown file — stance (orthodox/southpaw), 
+                  aggression level (0–100), counter-punching bias, clinch tendency, and risk tolerance. 
+                  The AI engine interprets your config and fights accordingly.
+                </p>
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );

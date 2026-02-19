@@ -8,20 +8,18 @@ const Hero = () => {
       <div className="absolute inset-0">
         <motion.img
           src={heroArena}
-          alt="Futuristic boxing arena"
+          alt="Boxing ring under dramatic spotlights"
           className="w-full h-full object-cover opacity-30"
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
         />
         <div className="absolute inset-0 bg-hero-gradient opacity-85" />
-        {/* Grain overlay */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
         }} />
       </div>
 
-      {/* Ambient light */}
       <div className="absolute top-1/3 left-1/3 w-[500px] h-[500px] rounded-full bg-primary/6 blur-[160px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-secondary/4 blur-[120px] pointer-events-none" />
 
@@ -34,7 +32,7 @@ const Hero = () => {
           <div className="inline-flex items-center gap-3 mb-8">
             <div className="h-px w-8 bg-primary/50" />
             <p className="font-mono text-[11px] tracking-[0.35em] text-primary/80 uppercase">
-              Wallet-Derived AI Combat
+              Autonomous AI Combat
             </p>
             <div className="h-px w-8 bg-primary/50" />
           </div>
@@ -46,11 +44,11 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.35 }}
         >
-          Your Chain.
+          Your Agent.
           <br />
           <span className="text-primary text-glow-cyan">Your Fighter.</span>
           <br />
-          <span className="text-secondary text-glow-gold">Your Ring.</span>
+          <span className="text-secondary text-glow-gold">Your Legacy.</span>
         </motion.h1>
 
         <motion.p
@@ -59,8 +57,8 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.55 }}
         >
-          On-chain identity meets AI-powered combat. Connect your wallet, mint a soulbound fighter, 
-          and watch autonomous agents battle in cinematic 3D — with real stakes on the line.
+          Mint an AI agent. Train it through combat. Watch it evolve, fight, and earn autonomously — 
+          no wallet history required, just skill and strategy.
         </motion.p>
 
         <motion.div
@@ -70,7 +68,7 @@ const Hero = () => {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.7 }}
         >
           <button className="group relative px-8 py-4 bg-primary text-primary-foreground font-display text-xl tracking-wider rounded-md overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_hsl(185_80%_50%/0.25)]">
-            <span className="relative z-10">Connect Wallet</span>
+            <span className="relative z-10">Mint Your Agent</span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </button>
           <button className="px-8 py-4 border border-border text-muted-foreground font-display text-xl tracking-wider rounded-md hover:text-foreground hover:border-primary/30 transition-all duration-300">
@@ -78,7 +76,6 @@ const Hero = () => {
           </button>
         </motion.div>
 
-        {/* Scroll indicator */}
         <motion.div
           className="absolute bottom-10 left-1/2 -translate-x-1/2"
           initial={{ opacity: 0 }}

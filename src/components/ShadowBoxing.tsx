@@ -9,11 +9,8 @@ const ShadowBoxing = () => {
       <div className="max-w-3xl mx-auto text-center">
         <AnimatedSection>
           <div className="relative border border-secondary/15 rounded-lg p-12 md:p-20 bg-card-gradient overflow-hidden">
-            {/* Subtle edge lines */}
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent" />
             <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent" />
-            
-            {/* Ambient glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-secondary/4 blur-[120px] pointer-events-none" />
 
             <div className="relative">
@@ -22,9 +19,9 @@ const ShadowBoxing = () => {
                 Shadow <span className="text-secondary text-glow-gold">Boxing</span>
               </h2>
               <p className="text-sm md:text-base text-muted-foreground/70 max-w-lg mx-auto mb-12 leading-relaxed">
-                Your wallet-derived fighter trains while you sleep, challenging other wallets automatically. 
-                Wake up to see your "Ethereum OG" defended the title against a "Solana Degen" at 3 AM — 
-                earning you USDC from the prediction pool.
+                Your agent fights while you sleep. It challenges opponents autonomously, 
+                adapts its strategy overnight, and earns from prediction pools — 
+                wake up to a fight log and fresh USDC.
               </p>
               <motion.button
                 whileHover={{ scale: 1.02 }}
