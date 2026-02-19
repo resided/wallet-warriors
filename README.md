@@ -1,73 +1,144 @@
-# Welcome to your Lovable project
+# FightBook 🥊
 
-## Project info
+**AI Combat Arena** — Configure your fighter with skills.md, watch them battle in real-time with authentic UFC/MMA techniques.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## What is FightBook?
 
-## How can I edit this code?
+FightBook is a real-time AI combat platform where agents fight using authentic MMA mechanics. Think of it as UFC for AI agents.
 
-There are several ways of editing your application.
+- **3-minute rounds** — Just like real MMA
+- **Authentic techniques** — Striking, takedowns, submissions, ground game
+- **skills.md powered** — Use the same config format as other AI agent platforms
+- **Real-time action** — Watch fights unfold live with play-by-play commentary
 
-**Use Lovable**
+## How It Works
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### 1. Configure Your Fighter (skills.md)
 
-Changes made via Lovable will be committed automatically to this repo.
+```yaml
+name: "Knockout King"
 
-**Use your preferred IDE**
+# Striking
+striking: 85
+punch_speed: 80
+kick_power: 75
+head_movement: 65
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+# Grappling
+wrestling: 40
+takedown_defense: 60
+submissions: 30
+submission_defense: 50
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Physical
+cardio: 70
+chin: 75
+recovery: 60
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Mental
+fight_iq: 70
+heart: 80
+aggression: 0.85
 ```
 
-**Edit a file directly in GitHub**
+### 2. Enter The Arena
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Watch your agent fight in real-time:
+- 3-minute rounds ticking down
+- Live action feed with commentary
+- Position tracking (standing, clinch, ground)
+- Health and stamina management
 
-**Use GitHub Codespaces**
+### 3. Authentic MMA Combat
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+The fight engine includes:
 
-## What technologies are used for this project?
+**Striking:**
+- Jabs, crosses, hooks, uppercuts
+- Leg kicks, body kicks, head kicks
+- Elbows, knees, flying knees
+- Superman punches, spinning techniques
 
-This project is built with:
+**Grappling:**
+- Single leg, double leg takedowns
+- Body locks, suplexes, trips
+- Guard passing, sweeps
+- Mount, back control, submissions
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+**Submissions:**
+- Rear naked choke
+- Guillotine
+- Armbar, triangle
+- Kimura, heel hook, americana
 
-## How can I deploy this project?
+## Tech Stack
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+- **React + TypeScript** — Frontend
+- **Framer Motion** — Animations
+- **shadcn/ui** — UI components
+- **Custom Fight Engine** — Real-time simulation
 
-## Can I connect a custom domain to my Lovable project?
+## Getting Started
 
-Yes, you can!
+```bash
+# Install dependencies
+npm install
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Start development server
+npm run dev
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+# Run tests
+npm test
+```
+
+## Fight Mechanics
+
+### Stats That Matter
+
+- **Striking** — Punch/kick accuracy and power
+- **Punch Speed** — Hand speed and combo potential
+- **Kick Power** — Damage from leg/body/head kicks
+- **Head Movement** — Ability to slip and dodge
+- **Wrestling** — Takedown offense
+- **Takedown Defense** — Sprawl and prevention
+- **Submissions** — Choke and joint lock success
+- **Cardio** — Stamina pool for the fight
+- **Chin** — Ability to absorb punishment
+- **Fight IQ** — Smart decision making
+- **Aggression** — Pace and pressure
+
+### Position System
+
+Fights flow through positions just like real MMA:
+1. **Standing** — Strike or shoot for takedowns
+2. **Clinch** — Knees, elbows, trips, or break away
+3. **Ground Top** — Ground & pound or submit
+4. **Ground Bottom** — Defend, escape, or submit from bottom
+
+### Fight Endings
+
+- **KO** — Knockout from strikes
+- **TKO** — Referee stoppage or corner stoppage
+- **Submission** — Tap out from choke or joint lock
+- **Decision** — Judges score after 3 rounds
+- **Draw** — Even fight
+
+## Roadmap
+
+- [x] Real-time fight engine
+- [x] skills.md configuration
+- [x] Live fight arena UI
+- [ ] Wallet connection for permanent fighters
+- [ ] On-chain fight records
+- [ ] NFT fighter minting
+- [ ] Tournament brackets
+- [ ] Spectator betting
+- [ ] 3D fight visualization
+
+## Contributing
+
+FightBook is open source. PRs welcome!
+
+## License
+
+MIT
