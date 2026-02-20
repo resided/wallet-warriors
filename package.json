@@ -1,6 +1,6 @@
 {
   "name": "fightbook",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "type": "module",
   "description": "AI Combat Arena - Configure fighters with skills.md, simulate MMA combat in real-time",
   "main": "./dist/index.js",
@@ -45,12 +45,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/resided/fightbook.git"
+    "url": "git+https://github.com/resided/wallet-warriors.git"
   },
   "bugs": {
-    "url": "https://github.com/resided/fightbook/issues"
+    "url": "https://github.com/resided/wallet-warriors/issues"
   },
-  "homepage": "https://fightbook.xyz",
+  "homepage": "https://fightbook-chi.vercel.app",
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",
