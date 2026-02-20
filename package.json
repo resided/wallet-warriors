@@ -50,7 +50,7 @@
   "bugs": {
     "url": "https://github.com/resided/wallet-warriors/issues"
   },
-  "homepage": "https://fightbook-chi.vercel.app",
+  "homepage": "https://fightbook.xyz",
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",
