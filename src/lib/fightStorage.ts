@@ -18,6 +18,7 @@ export interface FightRecord {
   fightData: FightState;
   prizeAwarded: boolean;
   prizeAmount: number;
+  isPractice?: boolean;
   createdAt: number;
 }
 
@@ -33,6 +34,7 @@ export interface FightRow {
   fight_data: Record<string, unknown>;
   prize_awarded: boolean;
   prize_amount: number;
+  is_practice?: boolean;
   created_at: string;
 }
 
@@ -50,6 +52,7 @@ function rowToFightRecord(row: FightRow): FightRecord {
     fightData: row.fight_data as unknown as FightState,
     prizeAwarded: row.prize_awarded,
     prizeAmount: row.prize_amount,
+    isPractice: row.is_practice,
     createdAt: new Date(row.created_at).getTime(),
   };
 }
@@ -80,8 +83,8 @@ export async function saveFightToDb(
     createdAt: Date.now(),
   };
 
-  if (isSupabaseConfigured() {
-    const { && supabase) data, error } = await supabase
+  if (isSupabaseConfigured() && supabase) {
+    const { data, error } = await supabase
       .from('fights')
       .insert({
         id: fightRecord.id,
