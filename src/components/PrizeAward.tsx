@@ -2,7 +2,8 @@
 // Manual prize awarding UI for fight winners
 
 import { useState } from 'react';
-import { Award, DollarSign, Check, X } from 'lucide-react';
+import { Award, DollarSign, Check, X, Flame } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,13 +15,15 @@ interface PrizeAwardProps {
   fightId: string;
   winnerName?: string;
   prizeAmount?: number;
-  onPrizeAwarded?: (amount: number) => void;
+  isEntertaining?: boolean;
+  onPrizeAwarded?: (amount: number, isEntertaining: boolean) => void;
 }
 
 export default function PrizeAward({
   fightId,
   winnerName = 'Winner',
   prizeAmount = 0,
+  isEntertaining: initialEntertaining = false,
   onPrizeAwarded,
 }: PrizeAwardProps) {
   const { toast } = useToast();
@@ -28,9 +31,13 @@ export default function PrizeAward({
   const [isLoading, setIsLoading] = useState(false);
   const [isAwarded, setIsAwarded] = useState(prizeAmount > 0);
   const [currentPrize, setCurrentPrize] = useState(prizeAmount);
+  const [isEntertaining, setIsEntertaining] = useState(initialEntertaining);
+  const [bonusAmount, setBonusAmount] = useState(50);
 
   const handleAwardPrize = async () => {
-    if (amount <= 0) {
+    const totalAmount = amount + (isEntertaining ? bonusAmount : 0);
+    
+    if (totalAmount <= 0) {
       toast({
         title: "Invalid Amount",
         description: "Please enter a valid prize amount",
@@ -41,16 +48,25 @@ export default function PrizeAward({
 
     setIsLoading(true);
     try {
-      const success = await awardPrize(fightId, amount);
+      const success = await awardPrize(fightId, totalAmount, isEntertaining);
       
       if (success) {
         setIsAwarded(true);
-        setCurrentPrize(amount);
-        toast({
-          title: "Prize Awarded!",
-          description: `Awarded $${amount} to ${winnerName}`,
-        });
-        onPrizeAwarded?.(amount);
+        setCurrentPrize(totalAmount);
+        
+        if (isEntertaining) {
+          toast({
+            title: "Prize + Bonus Awarded! 🔥",
+            description: `Awarded $${amount} prize + $${bonusAmount} bonus to ${winnerName}`,
+          });
+        } else {
+          toast({
+            title: "Prize Awarded!",
+            description: `Awarded $${amount} to ${winnerName}`,
+          });
+        }
+        
+        onPrizeAwarded?.(totalAmount, isEntertaining);
       } else {
         toast({
           title: "Error",
@@ -78,9 +94,13 @@ export default function PrizeAward({
           <CardTitle className="text-lg flex items-center gap-2">
             <Award className="w-5 h-5 text-green-500" />
             Prize Awarded
+            {isEntertaining && (
+              <Flame className="w-5 h-5 text-orange-500" />
+            )}
           </CardTitle>
           <CardDescription>
             Prize has been awarded to the winner
+            {isEntertaining && " (including entertainment bonus)"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -88,6 +108,12 @@ export default function PrizeAward({
             <DollarSign className="w-5 h-5" />
             <span className="text-2xl font-display">${currentPrize}</span>
           </div>
+          {isEntertaining && (
+            <div className="flex items-center gap-2 text-orange-500 mt-2 text-sm">
+              <Flame className="w-4 h-4" />
+              <span>Includes entertainment bonus</span>
+            </div>
+          )}
         </CardContent>
       </Card>
     );
@@ -139,9 +165,43 @@ export default function PrizeAward({
           </div>
         </div>
 
+        {/* Bonus for entertaining fight */}
+        <div className="flex items-start gap-3 p-3 rounded-lg border border-orange-500/30 bg-orange-500/5">
+          <Checkbox
+            id="entertaining"
+            checked={isEntertaining}
+            onCheckedChange={(checked) => setIsEntertaining(checked === true)}
+          />
+          <div className="flex-1">
+            <Label htmlFor="entertaining" className="flex items-center gap-2 cursor-pointer">
+              <Flame className="w-4 h-4 text-orange-500" />
+              Bonus for entertaining fight
+            </Label>
+            <p className="text-xs text-muted-foreground mt-1">
+              Award extra ${bonusAmount} for an exciting, crowd-pleasing fight
+            </p>
+            
+            {isEntertaining && (
+              <div className="flex gap-1 mt-2">
+                {[25, 50, 100, 200].map((val) => (
+                  <Button
+                    key={val}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setBonusAmount(val)}
+                    className={bonusAmount === val ? 'bg-orange-500/20 text-orange-500 border-orange-500' : ''}
+                  >
+                    +${val}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         <Button 
           onClick={handleAwardPrize} 
-          disabled={isLoading || amount <= 0}
+          disabled={isLoading || (amount + (isEntertaining ? bonusAmount : 0)) <= 0}
           className="w-full"
         >
           {isLoading ? (
@@ -152,7 +212,8 @@ export default function PrizeAward({
           ) : (
             <>
               <Award className="w-4 h-4 mr-2" />
-              Award ${amount} Prize
+              Award ${amount + (isEntertaining ? bonusAmount : 0)} Prize
+              {isEntertaining && <Flame className="w-4 h-4 ml-2 text-orange-400" />}
             </>
           )}
         </Button>

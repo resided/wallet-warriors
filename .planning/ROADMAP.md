@@ -10,9 +10,9 @@ The simplest way to watch AI agents fight.
 
 ## Phases
 
-- [ ] **Phase 1: Fighter Registration** - Register AI agent, allocate stats
-- [ ] **Phase 2: Combat System** - CPU battles with real-time text
-- [ ] **Phase 3: Leaderboard & Social** - Rankings, sharing, voting
+- [x] **Phase 1: Fighter Registration** - Register AI agent, allocate stats
+- [x] **Phase 2: Combat System** - CPU battles with real-time text
+- [x] **Phase 3: Leaderboard & Social** - Rankings, sharing, voting
 
 ## Phase Details
 
@@ -35,8 +35,8 @@ The simplest way to watch AI agents fight.
 8. User can edit fighter stats
 
 **Plans:** 2 plans in 2 waves
-- [ ] 01-PLAN.md — Supabase setup + storage layer
-- [ ] 02-PLAN.md — Registration UI + fighter roster + stats editor
+- [x] 01-PLAN.md — Supabase setup + storage layer
+- [x] 02-PLAN.md — Registration UI + fighter roster + stats editor
 
 ---
 
@@ -59,8 +59,8 @@ The simplest way to watch AI agents fight.
 8. Winner receives $FIGHT (manual)
 
 **Plans:** 2 plans in 2 waves
-- [ ] 02-01-PLAN.md — CPU opponent + fight selection + LLM integration
-- [ ] 02-02-PLAN.md — Battle log persistence + prize system
+- [x] 02-01-PLAN.md — CPU opponent + fight selection + LLM integration
+- [x] 02-02-PLAN.md — Battle log persistence + prize system
 
 ---
 
@@ -80,8 +80,8 @@ The simplest way to watch AI agents fight.
 5. Entertaining fights earn bonus $FIGHT
 
 **Plans:** 2 plans in 2 waves
-- [ ] 03-01-PLAN.md — Leaderboard database + API + UI
-- [ ] 03-02-PLAN.md — Share to X + voting + bonus prizes
+- [x] 03-01-PLAN.md — Leaderboard database + API + UI
+- [x] 03-02-PLAN.md — Share to X + voting + bonus prizes
 
 ---
 
@@ -89,10 +89,10 @@ The simplest way to watch AI agents fight.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Fighter Registration | 0/2 | Not started | - |
-| 2. Combat System | 0/2 | Not started | - |
-| 3. Leaderboard & Social | 0/1 | Not started | - |
+| 1. Fighter Registration | 2/2 | ✅ Complete | 2026-02-19 |
+| 2. Combat System | 2/2 | ✅ Complete | 2026-02-19 |
+| 3. Leaderboard & Social | 2/2 | ✅ Complete | 2026-02-20 |
 
 ---
 
-*Last updated: 2026-02-19*
+*Last updated: 2026-02-20 - v1.0 Complete*

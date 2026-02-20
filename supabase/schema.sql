@@ -97,3 +97,34 @@ create index idx_fights_created_at on fights(created_at desc);
 -- Index for agent lookups
 create index idx_fights_agent1_id on fights(agent1_id);
 create index idx_fights_agent2_id on fights(agent2_id);
+
+-- Fight votes table - for voting on entertaining fights
+create table fight_votes (
+    id uuid default uuid_generate_v4() primary key,
+    fight_id uuid references fights(id) on delete cascade,
+    user_id uuid references auth.users(id) on delete cascade,
+    created_at timestamptz default now(),
+    unique(fight_id, user_id)
+);
+
+-- Enable Row Level Security
+alter table fight_votes enable row level security;
+
+-- RLS Policy: Users can view all votes
+create policy "Users can view all votes" on fight_votes
+    for select
+    using (true);
+
+-- RLS Policy: Users can only insert their own votes
+create policy "Users can insert own votes" on fight_votes
+    for insert
+    with check (auth.uid() = user_id);
+
+-- RLS Policy: Users can only delete their own votes
+create policy "Users can delete own votes" on fight_votes
+    for delete
+    using (auth.uid() = user_id);
+
+-- Index for vote lookups
+create index idx_fight_votes_fight_id on fight_votes(fight_id);
+create index idx_fight_votes_user_id on fight_votes(user_id);

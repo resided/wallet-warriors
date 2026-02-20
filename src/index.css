@@ -1,56 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 220 20% 4%;
-    --foreground: 210 20% 92%;
-
-    --card: 220 18% 8%;
-    --card-foreground: 210 20% 92%;
-
-    --popover: 220 18% 8%;
-    --popover-foreground: 210 20% 92%;
-
-    --primary: 185 80% 50%;
-    --primary-foreground: 220 20% 4%;
-
-    --secondary: 42 90% 55%;
-    --secondary-foreground: 220 20% 4%;
-
-    --muted: 220 15% 14%;
-    --muted-foreground: 215 15% 55%;
-
-    --accent: 185 60% 20%;
-    --accent-foreground: 185 80% 70%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 220 15% 16%;
-    --input: 220 15% 16%;
-    --ring: 185 80% 50%;
-
-    --radius: 0.5rem;
-
-    --glow-cyan: 0 0 40px hsl(185 80% 50% / 0.3);
-    --glow-gold: 0 0 40px hsl(42 90% 55% / 0.3);
-    --gradient-hero: linear-gradient(135deg, hsl(220 20% 4%) 0%, hsl(220 25% 8%) 40%, hsl(185 30% 8%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(220 18% 10%) 0%, hsl(220 18% 6%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(185 80% 50%) 0%, hsl(200 70% 40%) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(42 90% 55%) 0%, hsl(35 85% 45%) 100%);
-
-    --sidebar-background: 220 18% 6%;
-    --sidebar-foreground: 210 20% 92%;
-    --sidebar-primary: 185 80% 50%;
-    --sidebar-primary-foreground: 220 20% 4%;
-    --sidebar-accent: 220 15% 14%;
-    --sidebar-accent-foreground: 210 20% 92%;
-    --sidebar-border: 220 15% 16%;
-    --sidebar-ring: 185 80% 50%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 25 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 25 100% 50%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 25 100% 50%;
+    --radius: 0.25rem;
   }
 }
 
@@ -60,75 +33,175 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 0.04em;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   }
 }
 
-@layer utilities {
-  .font-display {
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 0.04em;
-  }
-  .font-mono {
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .text-glow-cyan {
-    text-shadow: 0 0 20px hsl(185 80% 50% / 0.5), 0 0 60px hsl(185 80% 50% / 0.2);
-  }
-  .text-glow-gold {
-    text-shadow: 0 0 20px hsl(42 90% 55% / 0.5), 0 0 60px hsl(42 90% 55% / 0.2);
-  }
-  .box-glow-cyan {
-    box-shadow: 0 0 30px hsl(185 80% 50% / 0.15), 0 0 60px hsl(185 80% 50% / 0.05);
-  }
-  .box-glow-gold {
-    box-shadow: 0 0 30px hsl(42 90% 55% / 0.15), 0 0 60px hsl(42 90% 55% / 0.05);
-  }
-  .bg-hero-gradient {
-    background: var(--gradient-hero);
-  }
-  .bg-card-gradient {
-    background: var(--gradient-card);
-  }
-  .border-glow-cyan {
-    border-color: hsl(185 80% 50% / 0.3);
-  }
-  .border-glow-gold {
-    border-color: hsl(42 90% 55% / 0.3);
-  }
+/* Terminal-like styling */
+.terminal {
+  @apply bg-black border border-zinc-800 rounded-sm;
 }
 
-/* Animated gradient orb */
-@keyframes float {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-20px) scale(1.05); }
+.terminal-header {
+  @apply flex items-center gap-2 px-3 py-2 bg-zinc-900 border-b border-zinc-800;
 }
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+
+.terminal-body {
+  @apply p-4 font-mono text-sm;
 }
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(30px); }
+
+/* Command prompt style */
+.prompt {
+  @apply text-orange-500 font-bold;
+}
+
+.prompt::before {
+  content: '$ ';
+}
+
+/* Code blocks */
+pre, code {
+  @apply font-mono text-sm;
+}
+
+/* Links */
+a {
+  @apply text-orange-400 hover:text-orange-300 transition-colors;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-black;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-zinc-800 rounded-sm;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-zinc-700;
+}
+
+/* Selection */
+::selection {
+  @apply bg-orange-500/30;
+}
+
+/* Cursor blink */
+.cursor-blink::after {
+  content: '_';
+  @apply animate-pulse;
+}
+
+/* Status indicators */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-dot.online {
+  @apply bg-green-500;
+}
+
+.status-dot.offline {
+  @apply bg-zinc-600;
+}
+
+.status-dot.fighting {
+  @apply bg-red-500 animate-pulse;
+}
+
+/* Section headers */
+.section-header {
+  @apply text-xs uppercase tracking-widest text-zinc-500 mb-4;
+}
+
+/* Stats display */
+.stat-line {
+  @apply flex justify-between items-center py-1 border-b border-zinc-900 last:border-0;
+}
+
+/* Button minimal style */
+.btn-minimal {
+  @apply px-3 py-1.5 text-sm border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 hover:border-orange-500/50 transition-all;
+}
+
+/* Card minimal */
+.card-minimal {
+  @apply border border-zinc-800 bg-black/50;
+}
+
+/* Skills.md syntax highlighting */
+.skills-md .comment {
+  @apply text-zinc-500;
+}
+
+.skills-md .key {
+  @apply text-cyan-400;
+}
+
+.skills-md .value {
+  @apply text-orange-300;
+}
+
+.skills-md .number {
+  @apply text-green-400;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-@keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
 .animate-slide-up {
-  animation: slide-up 0.8s ease-out forwards;
+  animation: slideUp 0.3s ease-out;
 }
-.animate-slide-in-left {
-  animation: slide-in-left 0.6s ease-out forwards;
+
+/* Focus styles */
+input:focus, textarea:focus, select:focus {
+  @apply outline-none ring-1 ring-orange-500/50 border-orange-500/50;
+}
+
+/* Fight output colors */
+.fight-output .timestamp {
+  @apply text-zinc-600;
+}
+
+.fight-output .actor {
+  @apply text-cyan-400;
+}
+
+.fight-output .action {
+  @apply text-zinc-300;
+}
+
+.fight-output .hit {
+  @apply text-orange-400;
+}
+
+.fight-output .critical {
+  @apply text-red-400 font-bold;
+}
+
+.fight-output .success {
+  @apply text-green-400;
+}
+
+/* Grid lines */
+.grid-line {
+  @apply border-b border-zinc-900;
 }

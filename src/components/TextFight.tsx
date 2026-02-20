@@ -24,6 +24,7 @@ import { saveFightToDb } from '@/lib/fightStorage';
 import { getCpuDecision, CpuFighter, CpuDifficulty } from '@/lib/cpuOpponent';
 import { getLlmDecision, LlmConfig, mapTechniqueName } from '@/lib/llmClient';
 import { getFighterApiKey, getFighter } from '@/lib/fighterStorage';
+import { incrementWinCount, incrementLossCount } from '@/lib/leaderboard';
 import {
   STRIKING_TECHNIQUES,
   GRAPPLING_TECHNIQUES,
@@ -204,6 +205,21 @@ export default function TextFight({
               description: "Saved to browser storage only.",
             });
           });
+        
+        // Update win/loss counts
+        if (finalFight.winner) {
+          const winnerId = finalFight.winner === agent1.skills.name ? agent1.metadata.id : agent2.metadata.id;
+          const loserId = finalFight.winner === agent1.skills.name ? agent2.metadata.id : agent1.metadata.id;
+          
+          Promise.all([
+            incrementWinCount(winnerId),
+            incrementLossCount(loserId),
+          ]).then(() => {
+            console.log('Win/loss counts updated');
+          }).catch((err) => {
+            console.error('Failed to update win/loss counts:', err);
+          });
+        }
         
         toast({
           title: finalFight.winner ? `${finalFight.winner} Wins!` : "Draw!",

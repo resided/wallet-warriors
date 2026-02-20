@@ -7,42 +7,42 @@
 
 ### Fighter Registration
 
-- [ ] **REGI-01**: User can register their AI agent with a name
-- [ ] **REGI-02**: User can provide their API key (OpenAI/Anthropic)
-- [ ] **REGI-03**: Fighter is saved with name + API key
-- [ ] **REGI-04**: User can view their registered fighters
+- [x] **REGI-01**: User can register their AI agent with a name
+- [x] **REGI-02**: User can provide their API key (OpenAI/Anthropic)
+- [x] **REGI-03**: Fighter is saved with name + API key
+- [x] **REGI-04**: User can view their registered fighters
 
 ### Stat Allocation
 
-- [ ] **STAT-01**: User can allocate points to Power/Speed/Defense/Stamina
-- [ ] **STAT-02**: Total points limited (can't max everything)
-- [ ] **STAT-03**: Stats affect battle outcomes
-- [ ] **STAT-04**: User can view/edit their fighter's stats
+- [x] **STAT-01**: User can allocate points to Power/Speed/Defense/Stamina
+- [x] **STAT-02**: Total points limited (can't max everything)
+- [x] **STAT-03**: Stats affect battle outcomes
+- [x] **STAT-04**: User can view/edit their fighter's stats
 
 ### Combat (CPU)
 
-- [ ] **CPU-01**: User can start a fight against CPU opponent
-- [ ] **CPU-02**: User's LLM decides moves based on battle state
-- [ ] **CPU-03**: CPU opponent makes basic decisions
-- [ ] **CPU-04**: Battle is turn-based with text actions
-- [ ] **CPU-05**: Battle shows scrolling text in real-time
-- [ ] **CPU-06**: Battle ends with clear winner declared
-- [ ] **CPU-07**: Full battle log saved and viewable
+- [x] **CPU-01**: User can start a fight against CPU opponent
+- [x] **CPU-02**: User's LLM decides moves based on battle state
+- [x] **CPU-03**: CPU opponent makes basic decisions
+- [x] **CPU-04**: Battle is turn-based with text actions
+- [x] **CPU-05**: Battle shows scrolling text in real-time
+- [x] **CPU-06**: Battle ends with clear winner declared
+- [x] **CPU-07**: Full battle log saved and viewable
 
 ### Leaderboard
 
-- [ ] **LEAD-01**: Leaderboard displays fighters ranked by wins
-- [ ] **LEAD-02**: Win count shown for each fighter
+- [x] **LEAD-01**: Leaderboard displays fighters ranked by wins
+- [x] **LEAD-02**: Win count shown for each fighter
 
 ### Prize
 
-- [ ] **PRIZ-01**: Winner receives $FIGHT token (manual award for now)
+- [x] **PRIZ-01**: Winner receives $FIGHT token (manual award for now)
 
 ### Social
 
-- [ ] **SOCL-01**: User can share fight recap to X (Twitter)
-- [ ] **SOCL-02**: Users can vote on most entertaining fight
-- [ ] **SOCL-03**: Entertaining fights earn bonus $FIGHT
+- [x] **SOCL-01**: User can share fight recap to X (Twitter)
+- [x] **SOCL-02**: Users can vote on most entertaining fight
+- [x] **SOCL-03**: Entertaining fights earn bonus $FIGHT
 
 ## Out of Scope
 
@@ -58,33 +58,33 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REGI-01 | | Pending |
-| REGI-02 | | Pending |
-| REGI-03 | | Pending |
-| REGI-04 | | Pending |
-| STAT-01 | | Pending |
-| STAT-02 | | Pending |
-| STAT-03 | | Pending |
-| STAT-04 | | Pending |
-| CPU-01 | | Pending |
-| CPU-02 | | Pending |
-| CPU-03 | | Pending |
-| CPU-04 | | Pending |
-| CPU-05 | | Pending |
-| CPU-06 | | Pending |
-| CPU-07 | | Pending |
-| LEAD-01 | | Pending |
-| LEAD-02 | | Pending |
-| PRIZ-01 | | Pending |
-| SOCL-01 | | Pending |
-| SOCL-02 | | Pending |
-| SOCL-03 | | Pending |
+| REGI-01 | Phase 1 | ✅ Complete |
+| REGI-02 | Phase 1 | ✅ Complete |
+| REGI-03 | Phase 1 | ✅ Complete |
+| REGI-04 | Phase 1 | ✅ Complete |
+| STAT-01 | Phase 1 | ✅ Complete |
+| STAT-02 | Phase 1 | ✅ Complete |
+| STAT-03 | Phase 1 | ✅ Complete |
+| STAT-04 | Phase 1 | ✅ Complete |
+| CPU-01 | Phase 2 | ✅ Complete |
+| CPU-02 | Phase 2 | ✅ Complete |
+| CPU-03 | Phase 2 | ✅ Complete |
+| CPU-04 | Phase 2 | ✅ Complete |
+| CPU-05 | Phase 2 | ✅ Complete |
+| CPU-06 | Phase 2 | ✅ Complete |
+| CPU-07 | Phase 2 | ✅ Complete |
+| LEAD-01 | Phase 3 | ✅ Complete |
+| LEAD-02 | Phase 3 | ✅ Complete |
+| PRIZ-01 | Phase 2 | ✅ Complete |
+| SOCL-01 | Phase 3 | ✅ Complete |
+| SOCL-02 | Phase 3 | ✅ Complete |
+| SOCL-03 | Phase 3 | ✅ Complete |
 
 **Coverage:**
 - v1 requirements: 20 total
-- Mapped to phases: 0
-- Unmapped: 17 ⚠️
+- Mapped to phases: 20
+- Complete: 100% ✅
 
 ---
 *Requirements defined: 2026-02-19*
-*Last updated: 2026-02-19 ClawHub skill + web app architecture*
+*Last updated: 2026-02-20 All v1.0 requirements completed*

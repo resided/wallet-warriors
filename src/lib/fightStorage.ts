@@ -247,13 +247,14 @@ export async function getFightById(fightId: string): Promise<FightRecord | null>
 /**
  * Award prize to fight winner
  */
-export async function awardPrize(fightId: string, amount: number): Promise<boolean> {
+export async function awardPrize(fightId: string, amount: number, isEntertaining: boolean = false): Promise<boolean> {
   if (isSupabaseConfigured() && supabase) {
     const { error } = await supabase
       .from('fights')
       .update({
         prize_awarded: true,
         prize_amount: amount,
+        is_entertaining: isEntertaining,
       })
       .eq('id', fightId);
 
@@ -264,7 +265,31 @@ export async function awardPrize(fightId: string, amount: number): Promise<boole
 
     return true;
   } else {
-    console.log('Prize awarded locally:', { fightId, amount });
+    console.log('Prize awarded locally:', { fightId, amount, isEntertaining });
+    return true;
+  }
+}
+
+/**
+ * Mark fight as entertaining (bonus prize)
+ */
+export async function markFightEntertaining(fightId: string): Promise<boolean> {
+  if (isSupabaseConfigured() && supabase) {
+    const { error } = await supabase
+      .from('fights')
+      .update({
+        is_entertaining: true,
+      })
+      .eq('id', fightId);
+
+    if (error) {
+      console.error('Failed to mark fight as entertaining:', error.message);
+      return false;
+    }
+
+    return true;
+  } else {
+    console.log('Fight marked as entertaining locally:', { fightId });
     return true;
   }
 }
