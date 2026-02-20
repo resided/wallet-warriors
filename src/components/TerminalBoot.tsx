@@ -1,7 +1,7 @@
 // FightBook - Terminal Boot Sequence
 // First-time site loading experience
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Swords, Users, Trophy, Zap, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,7 @@ export default function TerminalBoot({ onComplete }: TerminalBootProps) {
   const [typedText, setTypedText] = useState('');
   const [showPrompt, setShowPrompt] = useState(false);
   const [isSkipping, setIsSkipping] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const bootSequence: BootLine[] = [
     { text: 'Initializing FightBook kernel...', color: 'text-zinc-500' },
@@ -60,6 +61,13 @@ export default function TerminalBoot({ onComplete }: TerminalBootProps) {
     { text: 'READY TO FIGHT?', color: 'text-orange-400', icon: Trophy },
   ];
 
+  // Auto-scroll to bottom as content types
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [currentLine, typedText]);
+
   useEffect(() => {
     if (isSkipping) return;
     
@@ -71,6 +79,10 @@ export default function TerminalBoot({ onComplete }: TerminalBootProps) {
         if (charIndex < line.text.length) {
           setTypedText(line.text.slice(0, charIndex + 1));
           charIndex++;
+          // Scroll on each character for smooth effect
+          if (scrollRef.current && charIndex % 5 === 0) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+          }
         } else {
           clearInterval(typeInterval);
           setTimeout(() => {
@@ -121,7 +133,10 @@ export default function TerminalBoot({ onComplete }: TerminalBootProps) {
         </div>
 
         {/* Terminal Output */}
-        <div className="p-6 font-mono text-sm h-[500px] overflow-y-auto bg-black">
+        <div 
+          ref={scrollRef}
+          className="p-6 font-mono text-sm h-[500px] overflow-y-auto bg-black scroll-smooth"
+        >
           {/* Completed Lines */}
           {visibleLines.map((line, i) => (
             <div key={i} className={`${line.color} mb-1 flex items-center gap-2`}>
