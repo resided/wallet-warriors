@@ -1,3 +1,7 @@
+# Keep README
+!README.md
+!LICENSE
+
 # Source files
 src/
 scripts/
@@ -24,11 +28,8 @@ tsconfig.*.json
 tests/
 coverage/
 
-# Docs (keep README and LICENSE)
+# Docs
 docs/
-*.md
-!README.md
-!LICENSE
 
 # Misc
 .env
