@@ -1,18 +1,56 @@
 {
   "name": "fightbook",
-  "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
-  "description": "AI Combat Arena - Configure fighters with skills.md, watch them battle in real-time with authentic MMA techniques",
+  "description": "AI Combat Arena - Configure fighters with skills.md, simulate MMA combat in real-time",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./cli": "./dist/cli.js"
+  },
+  "bin": {
+    "fightbook": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run build:lib",
     "build:dev": "vite build --mode development",
+    "build:lib": "tsc --declaration --emitDeclarationOnly --outDir dist && node scripts/build-lib.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
   },
+  "keywords": [
+    "ai",
+    "combat",
+    "mma",
+    "simulation",
+    "skills.md",
+    "agents",
+    "fighting",
+    "game",
+    "typescript"
+  ],
+  "author": "FightBook",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/resided/fightbook.git"
+  },
+  "bugs": {
+    "url": "https://github.com/resided/fightbook/issues"
+  },
+  "homepage": "https://fightbook.xyz",
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",
@@ -76,6 +114,7 @@
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react-swc": "^3.11.0",
     "autoprefixer": "^10.4.21",
+    "esbuild": "^0.27.3",
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",

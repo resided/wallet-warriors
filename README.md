@@ -1,187 +1,238 @@
 # FightBook 🥊
 
-**AI Combat Arena** — Configure your fighter with skills.md, watch them battle in real-time.
+[![npm version](https://badge.fury.io/js/fightbook.svg)](https://www.npmjs.com/package/fightbook)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Inspired by [walkie.sh](https://walkie.sh/) — minimal, terminal-native, agent-friendly.
+**AI Combat Arena** — Configure fighters with skills.md, simulate MMA combat in real-time.
 
-```
-$ fightbook init
-initializing AI combat arena...
-loading skills.md parser...
-ready.
+🔗 **Live Demo**: https://fightbook.xyz  
+🐦 **Twitter**: [@fightbookxyz](https://x.com/fightbookxyz)
 
-# Welcome to FightBook
-# Configure agents with skills.md
-# Watch them fight in real-time
-```
+---
 
 ## What is FightBook?
 
-FightBook is a minimal AI combat platform where agents fight using authentic MMA mechanics. Think of it as MMA for AI agents.
+FightBook is a real-time AI combat simulation platform. Create fighters using `skills.md` configuration files and watch them battle with authentic MMA techniques.
 
-- **skills.md powered** — Configure fighters with the same format used across the AI agent ecosystem
-- **3-minute rounds** — Just like real MMA
-- **Authentic techniques** — Striking, takedowns, submissions, ground game
-- **Terminal aesthetic** — Clean, minimal, agent-friendly interface
-- **Real-time action** — Watch fights unfold live with play-by-play commentary
+- **3-minute rounds** with real-time play-by-play
+- **25+ configurable attributes** (striking, grappling, cardio, fight IQ)
+- **Point budget system** — every choice matters (like FIFA player creation)
+- **Position-based combat** — standing → clinch → ground
+- **skills.md format** — compatible with the AI agent meta
 
-## Quick Start
+---
+
+## Installation
 
 ```bash
-# 1. Create your fighter
-cat > myfighter.md << 'EOF'
-name: "Terminator"
-nickname: "The Machine"
-
-striking: 80
-wrestling: 60
-submissions: 40
-cardio: 85
-chin: 75
-aggression: 0.8
-EOF
-
-# 2. Open fightbook, click "import", select myfighter.md
-# 3. Select two agents, click the sword icon to fight
+npm install fightbook
 ```
+
+Or use globally for CLI:
+
+```bash
+npm install -g fightbook
+```
+
+---
+
+## CLI Usage
+
+### Create a new fighter
+
+```bash
+fightbook init my-fighter
+```
+
+This creates `my-fighter.md` with a template you can edit.
+
+### Validate a skills.md file
+
+```bash
+fightbook validate ./my-fighter.md
+```
+
+### Run a fight
+
+```bash
+fightbook fight ./agent1.md ./agent2.md
+```
+
+Watch the combat unfold in real-time!
+
+---
+
+## JavaScript/TypeScript API
+
+### Basic Usage
+
+```typescript
+import { FightEngine, parseSkillsMd, createNewAgent } from 'fightbook';
+
+// Parse skills from markdown
+const skills = parseSkillsMd(`
+name: "Knockout King"
+nickname: "The Destroyer"
+
+striking: 85
+wrestling: 40
+submissions: 30
+cardio: 70
+chin: 75
+aggression: 0.85
+`);
+
+// Create agents
+const agent1 = createNewAgent('Agent 1');
+const agent2 = createNewAgent('Agent 2');
+
+// Run fight
+const engine = new FightEngine(agent1, agent2, {
+  onAction: (action) => {
+    console.log(`${action.description} (${action.damage} damage)`);
+  },
+  onRoundEnd: (round) => {
+    console.log(`End of round ${round.round}`);
+  },
+  onFightEnd: (fight) => {
+    console.log(`Winner: ${fight.winner} by ${fight.method}`);
+  },
+});
+
+engine.start();
+```
+
+### Point Budget System
+
+```typescript
+import { 
+  calculatePointsRemaining, 
+  getBudgetStatus,
+  validateSkillsBudget,
+  POINT_BUDGET 
+} from 'fightbook';
+
+// Check remaining points
+const remaining = calculatePointsRemaining(skills);
+console.log(`${remaining} / ${POINT_BUDGET.TOTAL} points remaining`);
+
+// Get budget status with color coding
+const status = getBudgetStatus(skills);
+console.log(status.status); // 'Balanced' | 'Medium' | 'High' | 'Maxed'
+
+// Validate configuration
+const validation = validateSkillsBudget(skills);
+if (!validation.valid) {
+  console.error(validation.errors);
+}
+```
+
+### Types
+
+```typescript
+import type { 
+  SkillsMdConfig, 
+  CompleteAgent, 
+  FightState, 
+  FightAction 
+} from 'fightbook';
+
+// All types are fully exported
+const config: SkillsMdConfig = {
+  name: 'My Fighter',
+  striking: 80,
+  wrestling: 60,
+  // ... 25+ attributes
+};
+```
+
+---
 
 ## skills.md Format
 
-Your fighter is defined by a simple YAML-like format:
-
 ```yaml
-name: "Your Fighter Name"
-nickname: "The Nickname"
+# Identity
+name: "Iron Fist"
+nickname: "The Punisher"
 
 # Striking (0-100)
-striking: 70
-punch_speed: 75
-kick_power: 65
-head_movement: 70
+striking: 85          # Punch/kick power
+punch_speed: 80       # Hand speed
+kick_power: 75        # Leg kicks
+head_movement: 70     # Defense
+footwork: 72          
+combinations: 75      # Chain strikes
 
 # Grappling (0-100)
-wrestling: 60
-takedown_defense: 70
-submissions: 45
+wrestling: 65         # Takedowns
+takedown_defense: 70  # Sprawl
+clinch_control: 60    
+submissions: 55       # Chokes/joints
+submission_defense: 65
 
 # Physical (0-100)
-cardio: 80
-chin: 75
+cardio: 75            # Stamina
+chin: 80              # Damage resistance
+recovery: 70          # Between rounds
 
-# Mental
-aggression: 0.7
-fight_iq: 70
+# Mental (0-100, free stats)
+fight_iq: 70          # Smart decisions
+heart: 75             # Comeback factor
+aggression: 0.75      # 0.0 - 1.0
 ```
 
-See [SKILL.md](./SKILL.md) for full documentation.
+---
 
 ## Features
 
-### 🤖 Agent Management
-- Create fighters via skills.md or visual editor
-- Import/export skills.md files
-- Edit stats anytime
-- Duplicate agents for variants
+### Combat Engine
+- **40+ MMA techniques**: jabs, hooks, leg kicks, takedowns, submissions, ground & pound
+- **Real-time simulation**: 3-minute rounds with authentic timing
+- **Position system**: Standing → Clinch → Ground (top/bottom)
+- **Victory conditions**: KO, TKO, Submission, Decision
 
-### ⚔️ Combat System
-- **Striking**: Jabs, crosses, hooks, kicks, knees, elbows
-- **Grappling**: Takedowns, trips, throws, clinch control
-- **Ground Game**: Guard passing, sweeps, submissions
-- **Authentic MMA**: 3 rounds, 3 minutes each
+### Fighter Progression
+- XP and leveling system
+- ELO-style rankings
+- Win/loss records with streaks
+- KO and submission counters
 
-### 🏆 Leaderboard
-- Ranked by win count
-- Win rate tracking
-- Top 3 get medals 🥇🥈🥉
+### Technical
+- TypeScript-first
+- Modular architecture
+- Headless fight engine (works in Node/browser)
+- Zero external dependencies for core engine
 
-### 🔗 Social
-- Share fights to X (Twitter)
-- Vote on entertaining fights
-- Bonus prizes for crowd-pleasers
+---
 
-## Tech Stack
-
-- **React + TypeScript** — Frontend
-- **Tailwind CSS** — Styling
-- **Monospace fonts** — Terminal aesthetic
-- **Custom Fight Engine** — Real-time simulation
-- **Supabase** — Database (optional)
-- **localStorage** — Offline-first fallback
-
-## Getting Started
+## Development
 
 ```bash
+# Clone repo
+git clone https://github.com/resided/fightbook.git
+cd fightbook
+
 # Install dependencies
 npm install
 
-# Start development server
+# Run dev server
 npm run dev
 
-# Build for production
-npm run build
+# Build library
+npm run build:lib
+
+# Run tests
+npm test
 ```
 
-## Fight Mechanics
-
-### Archetypes
-
-| Style | Key Stats | Description |
-|-------|-----------|-------------|
-| **Striker** | striking > 70 | Prefers stand-up, high punch/kick power |
-| **Grappler** | wrestling > 70 | Shoots for takedowns, ground control |
-| **Submission Artist** | submissions > 70 | Looks for chokes and joint locks |
-| **Counter Fighter** | aggression < 0.3 | Waits for openings, evasive |
-| **Pressure Fighter** | aggression > 0.8 | Constant forward pressure |
-| **Balanced** | All stats 60-70 | No major weaknesses |
-
-### Position System
-
-```
-Standing → Clinch → Ground (Top/Bottom)
-   ↑___________|
-```
-
-Fights flow through positions just like real MMA:
-1. **Standing** — Strike or shoot for takedowns
-2. **Clinch** — Knees, elbows, trips, or break away
-3. **Ground** — Ground & pound, submit, or escape
-
-### Win Conditions
-
-- **KO** — Knockout from strikes
-- **TKO** — Referee stoppage
-- **Submission** — Opponent taps
-- **Decision** — Judges score after 3 rounds
-- **Draw** — Even fight
-
-## Design Philosophy
-
-FightBook follows the [walkie.sh](https://walkie.sh/) aesthetic:
-
-- **Minimal** — No clutter, focused on content
-- **Terminal-native** — Monospace fonts, command-line feel
-- **Agent-friendly** — skills.md is the primary interface
-- **Dark mode** — Easy on the eyes for long sessions
-- **Fast** — No loading spinners, instant feedback
-
-## Roadmap
-
-- [x] Real-time fight engine
-- [x] skills.md configuration
-- [x] Terminal-style UI
-- [x] Leaderboard
-- [x] Social sharing & voting
-- [ ] Wallet connection for permanent fighters
-- [ ] On-chain fight records
-- [ ] NFT fighter minting
-- [ ] Tournament brackets
-- [ ] Spectator betting
-- [ ] CLI tool (`npm install -g fightbook`)
+---
 
 ## Contributing
 
-FightBook is open source. PRs welcome!
+PRs welcome! See [GitHub Issues](https://github.com/resided/fightbook/issues) for ideas.
+
+---
 
 ## License
 
-MIT
+MIT © FightBook

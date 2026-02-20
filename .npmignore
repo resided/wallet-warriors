@@ -1,0 +1,37 @@
+# Source files
+src/
+scripts/
+public/
+
+# Dev files
+.vscode/
+.idea/
+.vercel/
+.github/
+
+# Build tools
+vite.config.ts
+tsconfig.json
+tsconfig.*.json
+.eslintrc*
+.gitignore
+
+# Tests
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+tests/
+coverage/
+
+# Docs (keep README)
+docs/
+*.md
+!README.md
+
+# Misc
+.env
+.env.local
+.env.*.local
+.DS_Store
+*.log
