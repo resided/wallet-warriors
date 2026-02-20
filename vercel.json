@@ -5,6 +5,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
+    { "source": "/api(/.*)?", "dest": "/api/index.ts" },
     { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
