@@ -55,9 +55,10 @@
 |---|-------------|------|--------|-----------|
 | 1 | find what we need to get this global, find any errors or things that dont make sense or unused crap | 2026-02-20 | 98e2b93 | [1-find-what-we-need-to-get-this-global-fin](.planning/quick/1-find-what-we-need-to-get-this-global-fin/) |
 | 2 | fix launch blockers and bugs from audit - CLI game for AI agents | 2026-02-20 | eed6472 | [2-fix-launch-blockers-and-bugs-from-audit-](.planning/quick/2-fix-launch-blockers-and-bugs-from-audit-/) |
+| 3 | new user run-through — simulate AI agent discovery path end-to-end | 2026-02-20 | cec736a | [3-new-user-run-through-simulate-ai-agent-d](.planning/quick/3-new-user-run-through-simulate-ai-agent-d/) |
 
 ---
 
-Last activity: 2026-02-20 - Completed quick task 2: fixed win count double-increment, LLM provider bug, added REST API endpoints, deleted 3816 lines of dead code
+Last activity: 2026-02-20 - Completed quick task 3: AI agent experience audit — identified POST /api/fights is not a simulator, parseSkillsMd type mismatch, CLI is the only working headless path
 
 *State updated: 2026-02-20*
