@@ -13,8 +13,8 @@ create table fighters (
     user_id uuid references auth.users(id) on delete cascade,
     name text not null,
     win_count integer default 0,
-    api_key_encrypted text not null,
-    api_provider text check (api_provider in ('openai', 'anthropic')) not null,
+    api_key_encrypted text,  -- Optional for public fighters
+    api_provider text check (api_provider in ('openai', 'anthropic', null)),  -- Optional
     stats jsonb not null default '{}',
     metadata jsonb not null default '{}',
     created_at timestamptz default now(),
@@ -27,9 +27,24 @@ create index idx_fighters_win_count on fighters(win_count desc);
 -- Enable Row Level Security
 alter table fighters enable row level security;
 
--- RLS Policy: Users can only see and modify their own fighters
-create policy "Users can CRUD own fighters" on fighters
-    for all
+-- RLS Policy: Anyone can read fighters (for AI agents to fetch)
+create policy "Anyone can read fighters" on fighters
+    for select
+    using (true);
+
+-- RLS Policy: Authenticated users can insert their own fighters
+create policy "Users can insert own fighters" on fighters
+    for insert
+    with check (auth.uid() = user_id or user_id is null);
+
+-- RLS Policy: Users can update their own fighters
+create policy "Users can update own fighters" on fighters
+    for update
+    using (auth.uid() = user_id);
+
+-- RLS Policy: Users can delete their own fighters
+create policy "Users can delete own fighters" on fighters
+    for delete
     using (auth.uid() = user_id);
 
 -- Index for faster user_id lookups
@@ -74,15 +89,15 @@ create table fights (
 -- Enable Row Level Security
 alter table fights enable row level security;
 
--- RLS Policy: Users can view their own fights
-create policy "Users can view own fights" on fights
+-- RLS Policy: Anyone can read fights (for public leaderboard/history)
+create policy "Anyone can read fights" on fights
     for select
-    using (auth.uid() = user_id);
+    using (true);
 
 -- RLS Policy: Users can insert their own fights
 create policy "Users can insert own fights" on fights
     for insert
-    with check (auth.uid() = user_id);
+    with check (auth.uid() = user_id or user_id is null);
 
 -- RLS Policy: Users can update their own fights (for prize awarding)
 create policy "Users can update own fights" on fights

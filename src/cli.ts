@@ -121,7 +121,48 @@ async function runFight(file1: string, file2: string) {
   
   console.log(`\n🥊 ${agent1.skills.name} vs ${agent2.skills.name}\n`);
   
-  const engine = new FightEngine(agent1, agent2, {
+  // Extract FighterStats from CompleteAgent
+  const fighter1Stats = {
+    name: agent1.skills.name,
+    nickname: agent1.skills.nickname,
+    striking: agent1.skills.striking,
+    punchSpeed: agent1.skills.punchSpeed,
+    kickPower: agent1.skills.kickPower,
+    headMovement: agent1.skills.headMovement,
+    wrestling: agent1.skills.wrestling,
+    takedownDefense: agent1.skills.takedownDefense,
+    submissions: agent1.skills.submissions,
+    submissionDefense: agent1.skills.submissionDefense,
+    groundGame: (agent1.skills.groundAndPound + agent1.skills.topControl + agent1.skills.bottomGame) / 3,
+    cardio: agent1.skills.cardio,
+    chin: agent1.skills.chin,
+    recovery: agent1.skills.recovery,
+    aggression: agent1.skills.aggression,
+    fightIQ: agent1.skills.fightIQ,
+    heart: agent1.skills.heart,
+  };
+  
+  const fighter2Stats = {
+    name: agent2.skills.name,
+    nickname: agent2.skills.nickname,
+    striking: agent2.skills.striking,
+    punchSpeed: agent2.skills.punchSpeed,
+    kickPower: agent2.skills.kickPower,
+    headMovement: agent2.skills.headMovement,
+    wrestling: agent2.skills.wrestling,
+    takedownDefense: agent2.skills.takedownDefense,
+    submissions: agent2.skills.submissions,
+    submissionDefense: agent2.skills.submissionDefense,
+    groundGame: (agent2.skills.groundAndPound + agent2.skills.topControl + agent2.skills.bottomGame) / 3,
+    cardio: agent2.skills.cardio,
+    chin: agent2.skills.chin,
+    recovery: agent2.skills.recovery,
+    aggression: agent2.skills.aggression,
+    fightIQ: agent2.skills.fightIQ,
+    heart: agent2.skills.heart,
+  };
+  
+  const engine = new FightEngine(fighter1Stats, fighter2Stats, {
     onAction: (action) => {
       const time = new Date(action.timestamp).toISOString().substr(14, 5);
       const impact = action.impact ? `[${action.impact.toUpperCase()}]` : '';

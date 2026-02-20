@@ -7,7 +7,8 @@ import {
   saveAgent,
   deleteAgent,
 } from '@/lib/storage';
-import { generateFullSkillsMd, createNewAgent, parseSkillsMd } from '@/types/agent';
+import { syncAgent } from '@/lib/fighterStorage';
+import { generateFullSkillsMd, createNewAgent, validateSkillsBudget } from '@/types/agent';
 import { toast } from 'sonner';
 
 // Views
@@ -59,8 +60,13 @@ function App() {
     setView('edit');
   };
 
-  const handleSaveAgent = (agent: CompleteAgent) => {
+  const handleSaveAgent = async (agent: CompleteAgent) => {
     saveAgent(agent);
+    try {
+      await syncAgent(agent);
+    } catch (err) {
+      console.warn('Sync to cloud failed, saved locally:', err);
+    }
     if (!currentAgent || agent.metadata.id === currentAgent.metadata.id) {
       setCurrentAgent(agent);
     }
@@ -75,6 +81,76 @@ function App() {
     toast.success('Agent deleted');
   };
 
+  const handleFightCpu = () => {
+    if (!currentAgent || agents.length === 0) {
+      handleCreateAgent();
+      return;
+    }
+    
+    const now = Date.now();
+    const cpuNames = ['Iron Jaw', 'The Crusher', 'Phantom', 'Shadow', 'Tank', 'Viper'];
+    const randomName = `${cpuNames[Math.floor(Math.random() * cpuNames.length)]}`;
+    
+    const cpuAgent: CompleteAgent = {
+      metadata: {
+        id: `cpu_${now}`,
+        name: randomName,
+        createdAt: now,
+        updatedAt: now,
+        version: 1,
+        totalFights: 0,
+        wins: 0,
+        losses: 0,
+        draws: 0,
+        kos: 0,
+        submissions: 0,
+        currentStreak: 0,
+        bestStreak: 0,
+        ranking: 950,
+        earnings: 0,
+        xp: 0,
+        level: 1,
+      },
+      skills: {
+        ...currentAgent.skills,
+        name: randomName,
+        nickname: 'CPU',
+        striking: 50 + Math.floor(Math.random() * 30),
+        wrestling: 50 + Math.floor(Math.random() * 30),
+        submissions: 40 + Math.floor(Math.random() * 30),
+        cardio: 50 + Math.floor(Math.random() * 30),
+        punchSpeed: 50 + Math.floor(Math.random() * 30),
+        kickPower: 50 + Math.floor(Math.random() * 30),
+        headMovement: 50 + Math.floor(Math.random() * 30),
+        takedownDefense: 50 + Math.floor(Math.random() * 30),
+        submissionDefense: 50 + Math.floor(Math.random() * 30),
+        groundAndPound: 50 + Math.floor(Math.random() * 30),
+        topControl: 50 + Math.floor(Math.random() * 30),
+        bottomGame: 50 + Math.floor(Math.random() * 30),
+      },
+      personality: {
+        archetype: 'balanced',
+        attitude: 'intense',
+        preFightQuote: "Let's go.",
+        winQuote: 'Victory is mine.',
+        lossQuote: "I'll be back.",
+        fightingPhilosophy: 'Adapt and overcome.',
+      },
+      backstory: {
+        origin: 'CPU Generated',
+        trainingCamp: 'FightBook Gym',
+        signatureMove: 'The Finisher',
+        rivalries: [],
+        achievements: [],
+      },
+      social: {
+        agentName: `cpu_${now}`,
+      },
+    };
+    
+    handleFight(currentAgent, cpuAgent);
+  };
+
   const handleSelectAgent = (agent: CompleteAgent) => {
     setCurrentAgent(agent);
     setCurrentAgentState(agent);
@@ -87,18 +163,6 @@ function App() {
 
   const handleFightComplete = () => {
     loadAgents();
-  };
-
-  const handleImportSkillsMd = (content: string) => {
-    try {
-      const parsed = parseSkillsMd(content);
-      const newAgent = createNewAgent(parsed.name || 'Unnamed');
-      newAgent.skills = { ...newAgent.skills, ...parsed };
-      handleSaveAgent(newAgent);
-      toast.success('Agent imported from skills.md');
-    } catch (error) {
-      toast.error('Failed to parse skills.md');
-    }
   };
 
   const handleBootComplete = () => {
@@ -180,7 +244,7 @@ function App() {
             onDelete={handleDeleteAgent}
             onSelect={handleSelectAgent}
             onFight={handleFight}
-            onImport={handleImportSkillsMd}
+            onFightCpu={handleFightCpu}
           />
         )}
 

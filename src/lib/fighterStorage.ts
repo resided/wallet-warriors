@@ -67,11 +67,9 @@ function rowToAgent(row: FighterRow): CompleteAgent {
 }
 
 // Convert CompleteAgent to database row format
-function agentToRow(agent: CompleteAgent, apiKey: string, provider: string): Partial<FighterRow> {
-  return {
+function agentToRow(agent: CompleteAgent, apiKey?: string, provider?: string): Partial<FighterRow> {
+  const row: Partial<FighterRow> = {
     name: agent.metadata.name,
-    api_key_encrypted: encryptApiKey(apiKey),
-    api_provider: provider as 'openai' | 'anthropic',
     stats: agent.skills as unknown as Record<string, unknown>,
     metadata: {
       ...agent.metadata,
@@ -80,6 +78,14 @@ function agentToRow(agent: CompleteAgent, apiKey: string, provider: string): Par
       updatedAt: undefined,
     } as unknown as Record<string, unknown>,
   };
+
+  // Only add API key if provided
+  if (apiKey) {
+    row.api_key_encrypted = encryptApiKey(apiKey);
+    row.api_provider = provider as 'openai' | 'anthropic';
+  }
+
+  return row;
 }
 
 // =====================
@@ -89,14 +95,14 @@ function agentToRow(agent: CompleteAgent, apiKey: string, provider: string): Par
 /**
  * Save a new fighter to the database
  * @param name - Fighter name
- * @param apiKey - API key (will be encrypted)
+ * @param apiKey - API key (will be encrypted) - optional for local fighters
  * @param apiProvider - 'openai' or 'anthropic'
  * @param skills - Optional skills configuration
  */
 export async function saveFighter(
   name: string,
-  apiKey: string,
-  apiProvider: 'openai' | 'anthropic',
+  apiKey?: string,
+  apiProvider?: 'openai' | 'anthropic',
   skills?: Partial<SkillsMdConfig>
 ): Promise<CompleteAgent> {
   const agent = createNewAgent(name);
@@ -119,10 +125,7 @@ export async function saveFighter(
     return rowToAgent(data);
   } else {
     // Fallback to localStorage
-    const fighters = storage.getAllAgents();
-    agent.metadata.id = `local_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-    fighters.push(agent);
-    localStorage.setItem('fightbook_agents', JSON.stringify(fighters));
+    storage.saveAgent(agent);
     return agent;
   }
 }
@@ -290,4 +293,63 @@ export async function deleteFighter(id: string): Promise<boolean> {
  */
 export function isUsingSupabase(): boolean {
   return isSupabaseConfigured();
+}
+
+/**
+ * Save or update a complete agent (full sync)
+ * @param agent - Complete agent to save
+ * @param apiKey - Optional API key
+ * @param apiProvider - Optional API provider
+ */
+export async function syncAgent(
+  agent: CompleteAgent,
+  apiKey?: string,
+  apiProvider?: 'openai' | 'anthropic'
+): Promise<CompleteAgent> {
+  // Check if agent exists in Supabase
+  if (isSupabaseConfigured() && supabase) {
+    // Try to update first
+    const { data: existing } = await supabase
+      .from('fighters')
+      .select('id')
+      .eq('id', agent.metadata.id)
+      .single();
+
+    if (existing) {
+      // Update existing
+      const updateData: Partial<FighterRow> = {
+        name: agent.metadata.name,
+        stats: agent.skills as unknown as Record<string, unknown>,
+        metadata: {
+          ...agent.metadata,
+          id: undefined,
+          createdAt: undefined,
+          updatedAt: undefined,
+        } as unknown as Record<string, unknown>,
+      };
+
+      if (apiKey) {
+        updateData.api_key_encrypted = encryptApiKey(apiKey);
+        updateData.api_provider = apiProvider;
+      }
+
+      const { error } = await supabase
+        .from('fighters')
+        .update(updateData)
+        .eq('id', agent.metadata.id);
+
+      if (error) {
+        console.error('Failed to sync fighter:', error.message);
+      }
+    } else {
+      // Insert new
+      await supabase
+        .from('fighters')
+        .insert(agentToRow(agent, apiKey, apiProvider));
+    }
+  }
+
+  // Always save to localStorage as backup
+  storage.saveAgent(agent);
+  return agent;
 }

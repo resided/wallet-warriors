@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Upload, Swords, Trash2, Edit2, User, Trophy } from 'lucide-react';
+import { Swords, Trash2, Edit2, User, Trophy, Bot, Medal } from 'lucide-react';
 import type { CompleteAgent } from '@/types/agent';
-import { calculateOverallRating, detectArchetype } from '@/types/agent';
+import { calculateOverallRating, detectArchetype, DEFAULT_SKILLS } from '@/types/agent';
+import { getLeaderboard } from '@/lib/storage';
 
 interface TerminalRosterProps {
   agents: CompleteAgent[];
@@ -11,7 +12,7 @@ interface TerminalRosterProps {
   onDelete: (id: string) => void;
   onSelect: (agent: CompleteAgent) => void;
   onFight: (agent1: CompleteAgent, agent2: CompleteAgent) => void;
-  onImport: (content: string) => void;
+  onFightCpu?: () => void;
 }
 
 export default function TerminalRoster({
@@ -22,11 +23,9 @@ export default function TerminalRoster({
   onDelete,
   onSelect,
   onFight,
-  onImport,
+  onFightCpu,
 }: TerminalRosterProps) {
   const [selectedForFight, setSelectedForFight] = useState<CompleteAgent | null>(null);
-  const [showImport, setShowImport] = useState(false);
-  const [importText, setImportText] = useState('');
 
   const handleSelectForFight = (agent: CompleteAgent) => {
     if (selectedForFight?.metadata.id === agent.metadata.id) {
@@ -39,24 +38,79 @@ export default function TerminalRoster({
     }
   };
 
-  const handleImport = () => {
-    if (importText.trim()) {
-      onImport(importText);
-      setImportText('');
-      setShowImport(false);
+  const generateCpuOpponent = (playerAgent: CompleteAgent): CompleteAgent => {
+    const now = Date.now();
+    const cpuNames = ['Iron Jaw', 'The Crusher', 'Phantom', 'Shadow', 'Tank', 'Viper', 'Blaze', 'Frost', 'Thunder', 'Apex'];
+    const randomName = `${cpuNames[Math.floor(Math.random() * cpuNames.length)]} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}.`;
+    
+    const baseSkills = { ...DEFAULT_SKILLS };
+    
+    Object.keys(baseSkills).forEach((key) => {
+      if (typeof baseSkills[key as keyof typeof baseSkills] === 'number') {
+        (baseSkills as any)[key] = Math.floor(40 + Math.random() * 50);
+      }
+    });
+    
+    const archetypes: Array<'striker' | 'grappler' | 'balanced' | 'wildcard'> = ['striker', 'grappler', 'balanced', 'wildcard'];
+    const archetype = archetypes[Math.floor(Math.random() * archetypes.length)];
+    
+    if (archetype === 'striker') {
+      baseSkills.striking += 20;
+      baseSkills.punchSpeed += 20;
+    } else if (archetype === 'grappler') {
+      baseSkills.wrestling += 20;
+      baseSkills.submissions += 20;
     }
+    
+    return {
+      metadata: {
+        id: `cpu_${now}_${Math.random().toString(36).substring(7)}`,
+        name: randomName,
+        createdAt: now,
+        updatedAt: now,
+        version: 1,
+        totalFights: 0,
+        wins: 0,
+        losses: 0,
+        draws: 0,
+        kos: 0,
+        submissions: 0,
+        currentStreak: 0,
+        bestStreak: 0,
+        ranking: 900 + Math.floor(Math.random() * 200),
+        earnings: 0,
+        xp: 0,
+        level: 1,
+      },
+      skills: { ...baseSkills, name: randomName, nickname: archetype },
+      personality: {
+        archetype,
+        attitude: ['intense', 'calm', 'aggressive'][Math.floor(Math.random() * 3)] as any,
+        preFightQuote: "Let's go.",
+        winQuote: 'Victory is mine.',
+        lossQuote: 'I\'ll be back.',
+        fightingPhilosophy: 'Adapt and overcome.',
+      },
+      backstory: {
+        origin: 'CPU Generated',
+        trainingCamp: 'FightBook Gym',
+        signatureMove: 'The Finisher',
+        rivalries: [],
+        achievements: [],
+      },
+      social: {
+        agentName: `cpu_${now}`,
+      },
+    };
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const content = event.target?.result as string;
-        onImport(content);
-      };
-      reader.readAsText(file);
+  const handleFightCpu = () => {
+    if (!currentAgent) {
+      onCreate();
+      return;
     }
+    const cpuOpponent = generateCpuOpponent(currentAgent);
+    onFight(currentAgent, cpuOpponent);
   };
 
   if (agents.length === 0) {
@@ -74,50 +128,6 @@ export default function TerminalRoster({
             >
               create agent
             </button>
-            <label className="btn-minimal cursor-pointer">
-              <Upload className="w-4 h-4 inline mr-2" />
-              import skills.md
-              <input 
-                type="file" 
-                accept=".md,.txt" 
-                className="hidden" 
-                onChange={handleFileUpload}
-              />
-            </label>
-          </div>
-        </div>
-
-        {/* Quick Start Template */}
-        <div className="border border-zinc-800 rounded-sm">
-          <div className="terminal-header">
-            <span className="text-xs text-zinc-500">quick_start_template.md</span>
-          </div>
-          <div className="terminal-body text-xs">
-            <pre className="text-zinc-400">
-{`# Copy this, save as skills.md, and import
-
-name: "My Fighter"
-nickname: "The Destroyer"
-
-# Striking
-striking: 75
-punch_speed: 80
-kick_power: 70
-head_movement: 65
-
-# Grappling
-wrestling: 60
-takedown_defense: 70
-submissions: 45
-
-# Physical
-cardio: 80
-chin: 75
-
-# Mental
-aggression: 0.7
-fight_iq: 70`}
-            </pre>
           </div>
         </div>
       </div>
@@ -126,6 +136,36 @@ fight_iq: 70`}
 
   return (
     <div className="space-y-4">
+      {/* Rankings Banner */}
+      {agents.length > 0 && (
+        <div className="border border-zinc-800 rounded-sm overflow-hidden">
+          <div className="bg-zinc-900 px-4 py-2 border-b border-zinc-800 flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-yellow-500" />
+            <span className="text-sm font-medium">Rankings</span>
+          </div>
+          <div className="grid grid-cols-5 gap-4 px-4 py-3">
+            {[...agents]
+              .sort((a, b) => b.metadata.ranking - a.metadata.ranking)
+              .slice(0, 5)
+              .map((agent, index) => {
+                const rating = calculateOverallRating(agent.skills);
+                const medals = ['🥇', '🥈', '🥉', '4', '5'];
+                return (
+                  <div key={agent.metadata.id} className="flex items-center gap-2">
+                    <span className="text-lg">{medals[index]}</span>
+                    <div>
+                      <div className="text-sm font-medium truncate max-w-[100px]">{agent.skills.name}</div>
+                      <div className="text-xs text-zinc-500">
+                        {agent.metadata.wins}-{agent.metadata.losses} • {rating} rating
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
+
       {/* Action Bar */}
       <div className="flex items-center justify-between">
         <div className="text-zinc-500 text-sm">
@@ -138,59 +178,21 @@ fight_iq: 70`}
             </span>
           )}
           <button 
-            onClick={() => setShowImport(!showImport)}
-            className="btn-minimal text-zinc-400"
-          >
-            <Upload className="w-4 h-4 inline mr-2" />
-            import
-          </button>
-          <button 
             onClick={onCreate}
             className="btn-minimal text-orange-500"
           >
             + new agent
           </button>
+          <button 
+            onClick={handleFightCpu}
+            disabled={agents.length === 0}
+            className="btn-minimal text-blue-400 disabled:opacity-30 flex items-center gap-2"
+          >
+            <Bot className="w-4 h-4" />
+            fight cpu
+          </button>
         </div>
       </div>
-
-      {/* Import Panel */}
-      {showImport && (
-        <div className="border border-zinc-800 rounded-sm p-4 animate-fade-in">
-          <div className="text-sm text-zinc-500 mb-3">
-            Paste skills.md content or upload file
-          </div>
-          <textarea
-            value={importText}
-            onChange={(e) => setImportText(e.target.value)}
-            placeholder="# Paste your skills.md here..."
-            className="w-full h-32 bg-black border border-zinc-800 rounded-sm p-3 text-sm font-mono resize-none mb-3"
-          />
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={handleImport}
-              disabled={!importText.trim()}
-              className="btn-minimal text-orange-500 disabled:opacity-50"
-            >
-              import
-            </button>
-            <label className="btn-minimal cursor-pointer">
-              upload file
-              <input 
-                type="file" 
-                accept=".md,.txt" 
-                className="hidden" 
-                onChange={handleFileUpload}
-              />
-            </label>
-            <button 
-              onClick={() => setShowImport(false)}
-              className="btn-minimal text-zinc-500"
-            >
-              cancel
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Agent List */}
       <div className="border border-zinc-800 rounded-sm overflow-hidden">
