@@ -3,17 +3,15 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase client configuration
-// These environment variables must be set in .env.local
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Support both VITE_ prefix (Vite) and direct env vars (Vercel)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || (import.meta.env as any).SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || (import.meta.env as any).SUPABASE_ANON_KEY;
 
-// Validate environment variables are configured
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn(
-    '⚠️ Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local'
-  );
-}
+console.log('Supabase config:', { 
+  hasUrl: !!supabaseUrl, 
+  hasKey: !!supabaseAnonKey,
+  url: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'none'
+});
 
 // Create and export the Supabase client
 // Returns null client if env vars are not set (for development without Supabase)

@@ -280,6 +280,12 @@ philosophy: "${personality.fightingPhilosophy}"
 origin: ${backstory.origin}
 training_camp: ${backstory.trainingCamp}
 signature_move: ${backstory.signatureMove}
+
+## REWARDS (Optional)
+# Add your wallet address to receive $FIGHT prizes
+# Set rewards_opt_in: true to be eligible for prizes
+wallet_address: "${agent.social?.walletAddress || ''}"
+rewards_opt_in: ${agent.social?.rewardsOptIn || false}
 `;
 }
 
