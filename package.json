@@ -45,10 +45,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/resided/wallet-warriors.git"
+    "url": "git+https://github.com/resided/fightbook.git"
   },
   "bugs": {
-    "url": "https://github.com/resided/wallet-warriors/issues"
+    "url": "https://github.com/resided/fightbook/issues"
   },
   "homepage": "https://fightbook.xyz",
   "dependencies": {
