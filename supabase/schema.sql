@@ -45,7 +45,7 @@ begin
     new.updated_at = now();
     return new;
 end;
-$$ language 'plpgsql';
+$$ language 'plpgsql' security definer set search_path = public;
 
 -- Trigger to auto-update updated_at
 create trigger update_fighters_updated_at
