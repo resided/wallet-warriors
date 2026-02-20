@@ -207,10 +207,4 @@ aggression: 0.75      # 0.0 - 1.0
 
 ## License
 
-PRs welcome! See [GitHub Issues](https://github.com/resided/fightbook/issues) for ideas.
-
----
-
-## License
-
 MIT © FightBook
