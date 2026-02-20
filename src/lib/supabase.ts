@@ -40,4 +40,5 @@ export interface FighterRow {
   metadata: Record<string, unknown>;
   created_at: string;
   updated_at: string;
+  win_count: number;
 }

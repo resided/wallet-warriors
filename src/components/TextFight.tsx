@@ -123,8 +123,11 @@ export default function TextFight({
         return getRandomTechnique(gameState.myPosition);
       }
       
+      // AFTER: read provider from fighter's stored data
+      const fighter = await getFighter(agent1.metadata.id);
+      const provider = (fighter as any)?.api_provider ?? 'openai';
       const llmConfig: LlmConfig = {
-        provider: 'openai', // Could be stored in fighter data
+        provider: provider as 'openai' | 'anthropic',
         apiKey,
       };
       
@@ -298,12 +301,6 @@ export default function TextFight({
     engineRef.current.pause();
     // Fast-forward simulation would go here
     resetFight();
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   if (!fight) return null;
