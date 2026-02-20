@@ -23,6 +23,8 @@ export interface AgentSocial {
   discordId?: string;
   agentName: string;
   avatarUrl?: string;
+  walletAddress?: string;  // For $FIGHT rewards - optional
+  rewardsOptIn: boolean;   // Whether to receive prizes
 }
 
 export interface AgentMetadata {
@@ -180,6 +182,7 @@ export const DEFAULT_BACKSTORY: AgentBackstory = {
 
 export const DEFAULT_SOCIAL: AgentSocial = {
   agentName: 'agent007',
+  rewardsOptIn: false,
 };
 
 export function createNewAgent(name: string): CompleteAgent {

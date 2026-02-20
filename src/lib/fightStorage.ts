@@ -155,41 +155,51 @@ function saveFightLocally(record: FightRecord): void {
  * Get fight history for current user
  */
 export async function getFightHistory(userId?: string): Promise<FightRecord[]> {
-  if (isSupabaseConfigured() && supabase) {
-    let query = supabase
-      .from('fights')
-      .select('*')
-      .order('created_at', { ascending: false });
+  // Always try localStorage first for instant load
+  const localHistory = storage.getFightHistory();
+  const localFights = localHistory.map((h, i) => ({
+    id: h.id || `local_${i}`,
+    agent1Id: h.agent1.id,
+    agent2Id: h.agent2.id,
+    winnerId: h.winner || null,
+    method: h.method,
+    round: h.round,
+    endTime: 0,
+    fightData: h.fightData,
+    prizeAwarded: false,
+    prizeAmount: 0,
+    createdAt: h.timestamp,
+  }));
 
-    if (userId) {
-      query = query.eq('user_id', userId);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('Failed to fetch fight history:', error.message);
-      return [];
-    }
-
-    return data.map((row: FightRow) => rowToFightRecord(row));
-  } else {
-    // Fallback to localStorage
-    const localHistory = storage.getFightHistory();
-    return localHistory.map((h, i) => ({
-      id: h.id || `local_${i}`,
-      agent1Id: h.agent1.id,
-      agent2Id: h.agent2.id,
-      winnerId: h.winner || null,
-      method: h.method,
-      round: h.round,
-      endTime: 0,
-      fightData: h.fightData,
-      prizeAwarded: false,
-      prizeAmount: 0,
-      createdAt: h.timestamp,
-    }));
+  // If Supabase is not configured, return local only
+  if (!isSupabaseConfigured() || !supabase) {
+    return localFights;
   }
+
+  // Try to get from Supabase
+  let query = supabase
+    .from('fights')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (userId) {
+    query = query.eq('user_id', userId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Failed to fetch fight history:', error.message);
+    return localFights; // Fall back to local on error
+  }
+
+  // If no data from Supabase, return local
+  if (!data || data.length === 0) {
+    return localFights;
+  }
+
+  // Return Supabase data (these are "official" fights)
+  return data.map((row: FightRow) => rowToFightRecord(row));
 }
 
 /**
