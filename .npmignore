@@ -24,10 +24,11 @@ tsconfig.*.json
 tests/
 coverage/
 
-# Docs (keep README)
+# Docs (keep README and LICENSE)
 docs/
 *.md
 !README.md
+!LICENSE
 
 # Misc
 .env
