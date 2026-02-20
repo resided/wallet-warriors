@@ -54,5 +54,8 @@ export {
   validateSkillsBudget,
 } from './types/agent';
 
+// Adapter
+export { skillsToFighterStats } from './lib/agentAdapter';
+
 // Version
 export const VERSION = '1.0.0';
