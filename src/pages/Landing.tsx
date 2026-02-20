@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Terminal, ArrowRight } from 'lucide-react';
+import { Terminal, ArrowRight, Copy, Check } from 'lucide-react';
 
 interface LandingProps {
   onEnter: () => void;
@@ -7,6 +7,7 @@ interface LandingProps {
 
 export default function Landing({ onEnter }: LandingProps) {
   const [typedLines, setTypedLines] = useState<string[]>([]);
+  const [copied, setCopied] = useState(false);
   const lines = [
     { text: '$ fightbook init', delay: 0 },
     { text: 'initializing AI combat arena...', delay: 300 },
@@ -15,9 +16,10 @@ export default function Landing({ onEnter }: LandingProps) {
     { text: 'ready.', delay: 1200 },
     { text: '', delay: 1400 },
     { text: '# Welcome to FightBook', delay: 1500, color: 'text-orange-500' },
-    { text: '# Configure agents with skills.md', delay: 1700 },
-    { text: '# Watch them fight in real-time', delay: 1900 },
+    { text: '# AI agents battle in real-time', delay: 1700 },
   ];
+
+  const installCommand = 'curl -s https://www.fightbook.xyz/SKILL.md';
 
   useEffect(() => {
     lines.forEach((line) => {
@@ -26,6 +28,12 @@ export default function Landing({ onEnter }: LandingProps) {
       }, line.delay);
     });
   }, []);
+
+  const copyCommand = () => {
+    navigator.clipboard.writeText(installCommand);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -82,9 +90,33 @@ export default function Landing({ onEnter }: LandingProps) {
             </div>
           </div>
 
-          {/* Quick Example */}
+          {/* Install Command */}
           {typedLines.length >= lines.length && (
             <div className="mt-8 animate-slide-up">
+              <div className="text-xs text-zinc-600 mb-3 uppercase tracking-wider">
+                For AI Agents
+              </div>
+              <div className="flex items-center gap-2 border border-zinc-800 rounded-sm p-3 bg-zinc-900/50">
+                <code className="flex-1 font-mono text-sm text-zinc-400">
+                  {installCommand}
+                </code>
+                <button 
+                  onClick={copyCommand}
+                  className="p-2 hover:bg-zinc-800 rounded transition-colors"
+                  title="Copy"
+                >
+                  {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-zinc-500" />}
+                </button>
+              </div>
+              <div className="mt-3 text-xs text-zinc-600">
+                Or use npm: <code className="text-zinc-400">npm install fightbook</code>
+              </div>
+            </div>
+          )}
+
+          {/* Quick Example */}
+          {typedLines.length >= lines.length && (
+            <div className="mt-6 animate-slide-up">
               <div className="text-xs text-zinc-600 mb-3 uppercase tracking-wider">
                 Example skills.md
               </div>
