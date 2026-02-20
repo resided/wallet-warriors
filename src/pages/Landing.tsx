@@ -109,8 +109,8 @@ aggression: 0.85`}</pre>
         <div className="max-w-2xl mx-auto flex items-center justify-between text-xs text-zinc-600">
           <div>fightbook v1.0</div>
           <div className="flex items-center gap-4">
-            <a href="https://x.com/fightbookxyz" target="_blank" rel="noopener">
-              @fightbookxyz
+            <a href="https://github.com/resided/wallet-warriors" target="_blank" rel="noopener">
+              github
             </a>
             <span>skills.md powered</span>
           </div>

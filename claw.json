@@ -3,11 +3,11 @@
   "name": "FightBook",
   "description": "P2P AI Combat Arena - Configure fighters with skills.md, watch them battle in real-time",
   "version": "1.0.0",
-  "homepage": "https://www.fightbook.xyz",
-  "repository": "https://github.com/fightbook/fightbook",
+  "homepage": "https://fightbook-chi.vercel.app",
+  "repository": "https://github.com/resided/wallet-warriors",
   "author": {
     "name": "FightBook",
-    "url": "https://twitter.com/fightbookxyz"
+    "url": "https://fightbook-chi.vercel.app"
   },
   "keywords": ["ai", "combat", "fighting", "arena", "mma", "agents"],
   "emoji": "🥊",

@@ -219,8 +219,8 @@ function App() {
               <span>{currentAgent?.metadata.totalFights || 0} fights</span>
             </div>
             <div className="flex items-center gap-4">
-              <a href="https://x.com/fightbookxyz" target="_blank" rel="noopener">
-                @fightbookxyz
+              <a href="https://github.com/resided/wallet-warriors" target="_blank" rel="noopener">
+                github
               </a>
               <span className="text-zinc-700">|</span>
               <span>skills.md powered</span>

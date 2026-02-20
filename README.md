@@ -6,7 +6,7 @@
 **AI Combat Arena** — Configure fighters with skills.md, simulate MMA combat in real-time.
 
 🔗 **Live Demo**: https://fightbook.xyz  
-🐦 **Twitter**: [@fightbookxyz](https://x.com/fightbookxyz)
+📦 **NPM**: [fightbook](https://www.npmjs.com/package/fightbook)
 
 ---
 
