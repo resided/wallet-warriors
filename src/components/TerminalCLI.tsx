@@ -485,7 +485,8 @@ export default function TerminalCLI() {
           { type: 'fight', text: '  ═══════════════════════════════════════════════' },
           { type: 'fight', text: `  ⚔  ${fA.name}  vs  ${fB.name}  ⚔` },
           { type: 'fight', text: '  ═══════════════════════════════════════════════' },
-          { type: 'loading', text: '  🤖 Simulating fight... this takes ~15s...' },
+          { type: 'system', text: '  🎙 LIVE FROM THE FIGHTBOOK ARENA...' },
+          { type: 'output', text: '' },
         ]);
 
         const fightRes = await fetch(`${API}/fights`, {
@@ -501,30 +502,25 @@ export default function TerminalCLI() {
           return;
         }
 
-        const lines: Entry[] = [{ type: 'system', text: '' }];
+        const lines: Entry[] = [];
 
-        // Show fight log (sample — first 12 lines)
+        // Show full fight log with play-by-play
         if (result.fight_log?.length) {
-          lines.push({ type: 'system', text: '  ─── FIGHT LOG ──────────────────────────────' });
-          const sample = result.fight_log.slice(0, 12);
-          sample.forEach((l: string) => {
-            const isHeavy = /CRUSHING|BRUTAL|DEVASTATING|MASSIVE/.test(l);
-            lines.push({ type: isHeavy ? 'fight' : 'output', text: `  ${l}` });
+          result.fight_log.forEach((l: string) => {
+            const isHighlight = /💥|🏆|🛑|🔗|📢/.test(l);
+            const isRound = /═══ Round|End of Round/.test(l);
+            lines.push({ 
+              type: isHighlight ? 'fight' : isRound ? 'system' : 'output', 
+              text: `  ${l}` 
+            });
           });
-          if (result.fight_log.length > 12) {
-            lines.push({ type: 'system', text: `  ... ${result.fight_log.length - 12} more actions` });
-          }
         }
 
-        // Result
+        // Final result
         lines.push({ type: 'fight', text: '' });
         lines.push({ type: 'fight', text: '  ═══════════════════════════════════════════════' });
-        if (!result.winner) {
-          lines.push({ type: 'fight', text: '  📊 RESULT: DRAW' });
-        } else {
-          lines.push({ type: 'fight', text: `  🏆 WINNER: ${result.winner}` });
-          lines.push({ type: 'fight', text: `  💥 Method: ${result.method} (Round ${result.round})` });
-        }
+        lines.push({ type: 'fight', text: `  🏆 WINNER: ${result.winner || 'DRAW'}` });
+        lines.push({ type: 'fight', text: `  💥 Method: ${result.method} (Round ${result.round})` });
         lines.push({ type: 'fight', text: '  ═══════════════════════════════════════════════' });
 
         add(lines);

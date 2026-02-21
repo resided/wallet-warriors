@@ -105,17 +105,112 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const fighter1Row = result1.data;
     const fighter2Row = result2.data;
 
-    const randomWinner = Math.random() > 0.5 ? fighter1Row.id : fighter2Row.id;
-    const methods = ['KO', 'TKO', 'SUB', 'DEC'];
-    const method = methods[Math.floor(Math.random() * methods.length)];
-    const round = Math.floor(Math.random() * 3) + 1;
+    // Generate fight simulation with play-by-play
+    const f1Stats = fighter1Row.stats || {};
+    const f2Stats = fighter2Row.stats || {};
+    
+    // Calculate fighter advantages
+    const f1Striking = (f1Stats.striking || 50) + (f1Stats.punchSpeed || 50);
+    const f2Striking = (f2Stats.striking || 50) + (f2Stats.punchSpeed || 50);
+    const f1Grappling = (f1Stats.wrestling || 50) + (f1Stats.submissions || 50);
+    const f2Grappling = (f2Stats.wrestling || 50) + (f2Stats.submissions || 50);
+    const f1Cardio = f1Stats.cardio || 50;
+    const f2Cardio = f2Stats.cardio || 50;
+    
+    // Determine winner based on stats (with some randomness)
+    const f1Score = f1Striking * 0.4 + f1Grappling * 0.4 + f1Cardio * 0.2 + Math.random() * 20;
+    const f2Score = f2Striking * 0.4 + f2Grappling * 0.4 + f2Cardio * 0.2 + Math.random() * 20;
+    
+    const winnerId = f1Score > f2Score ? fighter1Row.id : fighter2Row.id;
+    const winnerName = f1Score > f2Score ? fighter1Row.name : fighter2Row.name;
+    const loserName = f1Score > f2Score ? fighter2Row.name : fighter1Row.name;
+    
+    // Determine method and round
+    const strikingDiff = Math.abs(f1Striking - f2Striking);
+    const grapplingDiff = Math.abs(f1Grappling - f2Grappling);
+    
+    let method: string;
+    if (strikingDiff > 30 && Math.random() > 0.5) {
+      method = Math.random() > 0.5 ? 'KO' : 'TKO';
+    } else if (grapplingDiff > 30 && Math.random() > 0.5) {
+      method = 'SUB';
+    } else {
+      method = 'DEC';
+    }
+    
+    const round = method === 'DEC' ? 3 : Math.floor(Math.random() * 3) + 1;
+    
+    // Generate play-by-play commentary
+    const fightLog: string[] = [];
+    const rounds = ['Round 1', 'Round 2', 'Round 3'];
+    
+    for (let r = 0; r < (method === 'DEC' ? 3 : round); r++) {
+      fightLog.push(`\n═══ ${rounds[r]} ═══`);
+      
+      // Generate 3-5 actions per round
+      const actions = Math.floor(Math.random() * 3) + 3;
+      for (let a = 0; a < actions; a++) {
+        const isF1 = Math.random() > 0.5;
+        const attacker = isF1 ? fighter1Row.name : fighter2Row.name;
+        const defender = isF1 ? fighter2Row.name : fighter1Row.name;
+        
+        const strikes = [
+          `${attacker} lands a crisp jab`,
+          `${attacker} connects with a right hand`,
+          `${attacker} throws a leg kick`,
+          `${attacker} lands a body shot`,
+          `${attacker} misses with a wild hook`,
+          `${attacker} tags ${defender} with a straight`,
+          `${attacker} lands a devastating uppercut`,
+          `${attacker} connects with a head kick`,
+        ];
+        
+        const grapples = [
+          `${attacker} shoots for a takedown`,
+          `${attacker} gets the clinch against the cage`,
+          `${attacker} attempts a trip`,
+          `${attacker} secures a single leg`,
+          `${attacker} gets top position`,
+          `${attacker} passes to half guard`,
+          `${attacker} locks in a choke`,
+          `${attacker} works from the bottom`,
+        ];
+        
+        const isStrike = Math.random() > 0.4;
+        const actions = isStrike ? strikes : grapples;
+        fightLog.push(actions[Math.floor(Math.random() * actions.length)]);
+      }
+      
+      // End of round commentary
+      if (r === 2 || (method !== 'DEC' && r === round - 1)) {
+        if (method === 'KO') {
+          fightLog.push(`\n💥 ${winnerName} lands a CRUSHING blow! ${loserName} goes down!`);
+          fightLog.push(`🏆 ${winnerName} wins by KO in Round ${round}!`);
+        } else if (method === 'TKO') {
+          fightLog.push(`\n💥 ${winnerName} unleashes a flurry of punches!`);
+          fightLog.push(`🛑 The ref steps in! ${loserName} can't continue!`);
+          fightLog.push(`🏆 ${winnerName} wins by TKO in Round ${round}!`);
+        } else if (method === 'SUB') {
+          fightLog.push(`\n🔗 ${winnerName} locks in a tight submission!`);
+          fightLog.push(`📢 ${loserName} taps out!`);
+          fightLog.push(`🏆 ${winnerName} wins by submission in Round ${round}!`);
+        }
+      } else if (method === 'DEC') {
+        fightLog.push(`\n⏱ End of Round ${r + 1}`);
+      }
+    }
+    
+    if (method === 'DEC') {
+      fightLog.push(`\n📊 After 3 rounds, the judges score it for ${winnerName}!`);
+      fightLog.push(`🏆 ${winnerName} wins by decision!`);
+    }
 
     const { data: fightRecord, error: insertError } = await supabase
       .from('fights')
       .insert({
         agent1_id: fighter1_id,
         agent2_id: fighter2_id,
-        winner_id: randomWinner,
+        winner_id: winnerId,
         method: method,
         round: round,
         prize_awarded: false,
@@ -123,9 +218,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         fight_data: {
           fighter1: fighter1Row.name,
           fighter2: fighter2Row.name,
-          winner: randomWinner === fighter1Row.id ? fighter1Row.name : fighter2Row.name,
+          winner: winnerName,
           method: method,
           round: round,
+          log: fightLog,
           simulated: true
         }
       })
@@ -136,27 +232,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: insertError.message });
     }
 
-    if (randomWinner) {
-      const { data: winnerRow } = await supabase
+    // Update winner's win count
+    const { data: winnerRow } = await supabase
+      .from('fighters')
+      .select('win_count')
+      .eq('id', winnerId)
+      .single();
+    if (winnerRow) {
+      await supabase
         .from('fighters')
-        .select('win_count')
-        .eq('id', randomWinner)
-        .single();
-      if (winnerRow) {
-        await supabase
-          .from('fighters')
-          .update({ win_count: (winnerRow.win_count || 0) + 1 })
-          .eq('id', randomWinner);
-      }
+        .update({ win_count: (winnerRow.win_count || 0) + 1 })
+        .eq('id', winnerId);
     }
 
     return res.status(201).json({
       id: fightRecord.id,
       fighter1: fighter1Row.name,
       fighter2: fighter2Row.name,
-      winner_id: randomWinner,
+      winner: winnerName,
+      winner_id: winnerId,
       method: method,
       round: round,
+      fight_log: fightLog,
     });
   }
 
