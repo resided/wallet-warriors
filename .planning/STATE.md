@@ -61,9 +61,10 @@
 | 3 | new user run-through — simulate AI agent discovery path end-to-end | 2026-02-20 | cec736a | [3-new-user-run-through-simulate-ai-agent-d](.planning/quick/3-new-user-run-through-simulate-ai-agent-d/) |
 | 4 | fix agent onboarding — rewrite SKILL.md, wire FightEngine, add skillsToFighterStats | 2026-02-20 | ca8748b | [4-fix-agent-onboarding-rewrite-skill-md-qu](.planning/quick/4-fix-agent-onboarding-rewrite-skill-md-qu/) |
 | 5 | fix fight history: store full FightState in API fight_data, save CLI fights to Supabase | 2026-02-21 | d8224ba | [5-fix-fight-history-store-full-fightstate-](.planning/quick/5-fix-fight-history-store-full-fightstate-/) |
+| 6 | stat budget enforcement across CLI, API, and docs | 2026-02-21 | 95058f3 | [6-stat-budget-enforcement-across-cli-api-a](.planning/quick/6-stat-budget-enforcement-across-cli-api-a/) |
 
 ---
 
-Last activity: 2026-02-21 - Completed quick task 5: API fight_data stores full FightState, CLI fights saved to Supabase, CLI process-exit bug fixed
+Last activity: 2026-02-21 - Completed quick task 6: Budget enforcement in POST /api/fighters (400 on violation), budget line in fightbook validate (exit 1 on over-budget), budget docs in SKILL.md
 
-*State updated: 2026-02-20*
+*State updated: 2026-02-21*
