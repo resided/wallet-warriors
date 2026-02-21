@@ -83,6 +83,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         round: round,
         prize_awarded: false,
         prize_amount: 0,
+        fight_data: {
+          fighter1: fighter1Row.name,
+          fighter2: fighter2Row.name,
+          winner: randomWinner === fighter1Row.id ? fighter1Row.name : fighter2Row.name,
+          method: method,
+          round: round,
+          simulated: true
+        }
       })
       .select('id, agent1_id, agent2_id, winner_id, method, round, created_at')
       .single();

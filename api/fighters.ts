@@ -53,7 +53,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const { data, error } = await supabase
       .from('fighters')
-      .insert({ name, stats: stats || {}, metadata: metadata || {} })
+      .insert({ 
+        name, 
+        stats: stats || {}, 
+        metadata: metadata || {},
+        api_provider: 'openai',
+        api_key_encrypted: ''
+      })
       .select('id, name, win_count, stats, metadata, created_at')
       .single();
 
