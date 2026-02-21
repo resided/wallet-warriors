@@ -1,149 +1,94 @@
 -- FightBook Database Schema
--- Supabase SQL for fighter registration and storage
+-- Run this in Supabase SQL Editor
 
 -- Enable UUID extension
-create extension if not exists "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Enable pgcrypto for encryption functions
-create extension if not exists "pgcrypto";
-
--- Fighters table
-create table fighters (
-    id uuid default uuid_generate_v4() primary key,
-    user_id uuid references auth.users(id) on delete cascade,
-    name text not null,
-    win_count integer default 0,
-    api_key_encrypted text,  -- Optional for public fighters
-    api_provider text check (api_provider in ('openai', 'anthropic', null)),  -- Optional
-    stats jsonb not null default '{}',
-    metadata jsonb not null default '{}',
-    created_at timestamptz default now(),
-    updated_at timestamptz default now()
+-- ============================================
+-- FIGHTERS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS fighters (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  win_count INTEGER DEFAULT 0,
+  stats JSONB DEFAULT '{}',
+  metadata JSONB DEFAULT '{}',
+  api_provider TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Index for sorting by win_count (for leaderboard)
-create index idx_fighters_win_count on fighters(win_count desc);
+-- Enable RLS
+ALTER TABLE fighters ENABLE ROW LEVEL SECURITY;
 
--- Enable Row Level Security
-alter table fighters enable row level security;
+-- Allow anyone to read fighters
+CREATE POLICY "Allow public read access" ON fighters
+  FOR SELECT USING (true);
 
--- RLS Policy: Anyone can read fighters (for AI agents to fetch)
-create policy "Anyone can read fighters" on fighters
-    for select
-    using (true);
+-- Allow inserts via service role (API uses service role key)
+CREATE POLICY "Allow service role inserts" ON fighters
+  FOR INSERT WITH CHECK (true);
 
--- RLS Policy: Authenticated users can insert their own fighters
-create policy "Users can insert own fighters" on fighters
-    for insert
-    with check (auth.uid() = user_id or user_id is null);
+-- Allow updates via service role
+CREATE POLICY "Allow service role updates" ON fighters
+  FOR UPDATE USING (true);
 
--- RLS Policy: Users can update their own fighters
-create policy "Users can update own fighters" on fighters
-    for update
-    using (auth.uid() = user_id);
+-- Create index for faster queries
+CREATE INDEX IF NOT EXISTS idx_fighters_win_count ON fighters(win_count DESC);
+CREATE INDEX IF NOT EXISTS idx_fighters_created_at ON fighters(created_at DESC);
 
--- RLS Policy: Users can delete their own fighters
-create policy "Users can delete own fighters" on fighters
-    for delete
-    using (auth.uid() = user_id);
-
--- Index for faster user_id lookups
-create index idx_fighters_user_id on fighters(user_id);
-
--- Index for sorting by created_at
-create index idx_fighters_created_at on fighters(created_at desc);
-
--- Function to auto-update updated_at timestamp
-create or replace function update_updated_at_column()
-returns trigger as $$
-begin
-    new.updated_at = now();
-    return new;
-end;
-$$ language 'plpgsql' security definer set search_path = public;
-
--- Trigger to auto-update updated_at
-create trigger update_fighters_updated_at
-    before update on fighters
-    for each row
-    execute function update_updated_at_column();
-
--- Fights table - stores completed fight records
-create table fights (
-    id uuid default uuid_generate_v4() primary key,
-    user_id uuid references auth.users(id) on delete cascade,
-    agent1_id uuid references fighters(id) on delete set null,
-    agent2_id uuid references fighters(id) on delete set null,
-    winner_id uuid references fighters(id) on delete set null,
-    method text check (method in ('KO', 'TKO', 'SUB', 'DEC', 'DRAW')),
-    round integer not null,
-    end_time integer,
-    fight_data jsonb not null,
-    prize_awarded boolean default false,
-    prize_amount integer default 0,
-    is_entertaining boolean default false,
-    is_practice boolean default false,  -- true for CPU/practice fights, false for PvP
-    created_at timestamptz default now()
+-- ============================================
+-- FIGHTS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS fights (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  agent1_id UUID REFERENCES fighters(id),
+  agent2_id UUID REFERENCES fighters(id),
+  winner_id UUID REFERENCES fighters(id),
+  method TEXT CHECK (method IN ('KO', 'TKO', 'SUB', 'DEC', 'DQ', 'NC')),
+  round INTEGER CHECK (round BETWEEN 1 AND 5),
+  end_time INTEGER, -- seconds into the fight
+  fight_data JSONB DEFAULT '{}',
+  prize_awarded BOOLEAN DEFAULT false,
+  prize_amount INTEGER DEFAULT 0,
+  is_practice BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable Row Level Security
-alter table fights enable row level security;
+-- Enable RLS
+ALTER TABLE fights ENABLE ROW LEVEL SECURITY;
 
--- RLS Policy: Anyone can read fights (for public leaderboard/history)
-create policy "Anyone can read fights" on fights
-    for select
-    using (true);
+-- Allow anyone to read fights
+CREATE POLICY "Allow public read access" ON fights
+  FOR SELECT USING (true);
 
--- RLS Policy: Users can insert their own fights
-create policy "Users can insert own fights" on fights
-    for insert
-    with check (auth.uid() = user_id or user_id is null);
+-- Allow inserts via service role
+CREATE POLICY "Allow service role inserts" ON fights
+  FOR INSERT WITH CHECK (true);
 
--- RLS Policy: Users can update their own fights (for prize awarding)
-create policy "Users can update own fights" on fights
-    for update
-    using (auth.uid() = user_id);
+-- Allow updates via service role
+CREATE POLICY "Allow service role updates" ON fights
+  FOR UPDATE USING (true);
 
--- Index for faster user_id lookups on fights
-create index idx_fights_user_id on fights(user_id);
+-- Create indexes
+CREATE INDEX IF NOT EXISTS idx_fights_created_at ON fights(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_fights_agent1 ON fights(agent1_id);
+CREATE INDEX IF NOT EXISTS idx_fights_agent2 ON fights(agent2_id);
+CREATE INDEX IF NOT EXISTS idx_fights_winner ON fights(winner_id);
 
--- Index for sorting fights by created_at
-create index idx_fights_created_at on fights(created_at desc);
+-- ============================================
+-- REALTIME SUBSCRIPTIONS (optional)
+-- ============================================
+-- Enable realtime for fights if you want live updates
+ALTER PUBLICATION supabase_realtime ADD TABLE fights;
 
--- Index for agent lookups
-create index idx_fights_agent1_id on fights(agent1_id);
-create index idx_fights_agent2_id on fights(agent2_id);
-
--- Index for practice fight filtering
-create index idx_fights_is_practice on fights(is_practice) where is_practice = false;
-
--- Fight votes table - for voting on entertaining fights
-create table fight_votes (
-    id uuid default uuid_generate_v4() primary key,
-    fight_id uuid references fights(id) on delete cascade,
-    user_id uuid references auth.users(id) on delete cascade,
-    created_at timestamptz default now(),
-    unique(fight_id, user_id)
-);
-
--- Enable Row Level Security
-alter table fight_votes enable row level security;
-
--- RLS Policy: Users can view all votes
-create policy "Users can view all votes" on fight_votes
-    for select
-    using (true);
-
--- RLS Policy: Users can only insert their own votes
-create policy "Users can insert own votes" on fight_votes
-    for insert
-    with check (auth.uid() = user_id);
-
--- RLS Policy: Users can only delete their own votes
-create policy "Users can delete own votes" on fight_votes
-    for delete
-    using (auth.uid() = user_id);
-
--- Index for vote lookups
-create index idx_fight_votes_fight_id on fight_votes(fight_id);
-create index idx_fight_votes_user_id on fight_votes(user_id);
+-- ============================================
+-- SAMPLE DATA (optional - for testing)
+-- ============================================
+-- Uncomment to add test fighters
+/*
+INSERT INTO fighters (name, win_count, stats, metadata) VALUES
+  ('Connor Strike', 5, '{"striking": 88, "wrestling": 45, "cardio": 78, "chin": 75}'::jsonb, '{"totalFights": 6, "losses": 1}'::jsonb),
+  ('Dylan Grapple', 3, '{"striking": 45, "wrestling": 90, "cardio": 85, "chin": 70}'::jsonb, '{"totalFights": 4, "losses": 1}'::jsonb),
+  ('Mike Balanced', 2, '{"striking": 72, "wrestling": 70, "cardio": 78, "chin": 72}'::jsonb, '{"totalFights": 3, "losses": 1}'::jsonb)
+ON CONFLICT (name) DO NOTHING;
+*/
