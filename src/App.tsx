@@ -297,6 +297,10 @@ function App() {
               <span>{currentAgent?.metadata.totalFights || 0} fights</span>
             </div>
             <div className="flex items-center gap-4">
+              <a href="https://x.com/0xreside" target="_blank" rel="noopener">
+                @0xreside
+              </a>
+              <span className="text-zinc-700">|</span>
               <a href="https://github.com/resided/fightbook" target="_blank" rel="noopener">
                 github
               </a>
