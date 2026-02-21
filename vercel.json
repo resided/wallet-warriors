@@ -2,11 +2,5 @@
   "version": 2,
   "name": "fightbook",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": null,
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/api/(.*)", "dest": "/api/index.ts" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
+  "outputDirectory": "dist"
 }
