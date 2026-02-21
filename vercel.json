@@ -3,8 +3,15 @@
   "name": "fightbook",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/api/(.*)", "dest": "/api/index" }
-  ]
+  "rewrites": [
+    { "source": "/api/fighters", "destination": "/api/fighters.ts" },
+    { "source": "/api/fights", "destination": "/api/fights.ts" },
+    { "source": "/api/leaderboard", "destination": "/api/leaderboard.ts" },
+    { "source": "/api/:path*", "destination": "/api/index.ts" }
+  ],
+  "functions": {
+    "api/*.ts": {
+      "runtime": "@vercel/node@5.6.6"
+    }
+  }
 }
