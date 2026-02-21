@@ -145,6 +145,7 @@ function App() {
       },
       social: {
         agentName: `cpu_${now}`,
+        rewardsOptIn: false,
       },
     };
     

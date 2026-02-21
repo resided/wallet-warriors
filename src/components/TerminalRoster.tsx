@@ -99,6 +99,7 @@ export default function TerminalRoster({
       },
       social: {
         agentName: `cpu_${now}`,
+        rewardsOptIn: false,
       },
     };
   };
