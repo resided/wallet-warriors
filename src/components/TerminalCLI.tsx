@@ -199,14 +199,12 @@ export default function TerminalCLI() {
     }
 
     if (lower === 'register') {
-      setRegisterMode({ step: 'name', data: {} });
       add([
-        { type: 'system', text: '  ═══ REGISTER FIGHTER ═══' },
-        { type: 'output', text: '  Archetypes: striker, grappler, balanced, pressure, counter' },
-        { type: 'output', text: '  Stats are auto-assigned based on your archetype.' },
-        { type: 'output', text: '' },
-        { type: 'output', text: '  Step 1/3: Enter fighter name:' },
+        { type: 'system', text: '  Opening Fighter Creator...' },
+        { type: 'output', text: '  Use the visual interface to create your fighter.' },
       ]);
+      // Dispatch event to open creator
+      window.dispatchEvent(new CustomEvent('openFighterCreator'));
       return;
     }
 
