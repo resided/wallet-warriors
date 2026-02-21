@@ -152,7 +152,88 @@ a {
   @apply text-green-400;
 }
 
-/* Animations */
+/* ─── CRT / Terminal visual effects ─────────────────────────── */
+
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: 0 0 4px hsl(25 100% 50% / 0.4), 0 0 8px hsl(25 100% 50% / 0.2); }
+  50%       { text-shadow: 0 0 8px hsl(25 100% 50% / 0.6), 0 0 16px hsl(25 100% 50% / 0.3); }
+}
+
+@keyframes flicker {
+  0%   { opacity: 0.97; }
+  5%   { opacity: 0.95; }
+  10%  { opacity: 0.97; }
+  15%  { opacity: 0.93; }
+  20%  { opacity: 0.97; }
+  100% { opacity: 0.97; }
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Orange text glow */
+.terminal-glow {
+  text-shadow: 0 0 4px hsl(25 100% 50% / 0.4), 0 0 8px hsl(25 100% 50% / 0.2);
+}
+
+/* Stronger pulsing glow — use on ASCII banners, winner text */
+.terminal-glow-strong {
+  text-shadow: 0 0 6px hsl(25 100% 50% / 0.6), 0 0 12px hsl(25 100% 50% / 0.3), 0 0 20px hsl(25 100% 50% / 0.15);
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Solid block cursor for terminals */
+.cursor-blink-block {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  background: currentColor;
+  animation: cursor-blink 1s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+/* Subtle CRT flicker on the whole page */
+.crt-flicker {
+  animation: flicker 8s infinite;
+}
+
+/* Scanline overlay — placed with ::before so it doesn't block clicks */
+.scanline-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    hsl(0 0% 0% / 0.03) 2px,
+    hsl(0 0% 0% / 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Glowing progress bar track */
+.progress-glow {
+  box-shadow: 0 0 8px hsl(25 100% 50% / 0.4), inset 0 0 4px hsl(25 100% 50% / 0.2);
+}
+
+/* Green status dot */
+.status-online {
+  color: hsl(120 80% 45%);
+  text-shadow: 0 0 6px hsl(120 80% 45% / 0.5);
+}
+
+/* Red error text */
+.status-error {
+  color: hsl(0 80% 50%);
+  text-shadow: 0 0 6px hsl(0 80% 50% / 0.5);
+}
+
+/* ─── Animations ─────────────────────────────────────────────── */
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
