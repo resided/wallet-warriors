@@ -140,12 +140,7 @@ export default async function handler(req: Request) {
         round: fightResult.endRound || fightResult.currentRound,
         prize_awarded: false,
         prize_amount: 0,
-        fight_data: {
-          winner: fightResult.winner || null,
-          method: fightResult.method || null,
-          rounds: fightResult.rounds.length,
-          actions: fightLog,
-        },
+        fight_data: fightResult as unknown as Record<string, unknown>,
       })
       .select('id, agent1_id, agent2_id, winner_id, method, round, created_at')
       .single();
