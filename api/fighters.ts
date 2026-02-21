@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
+import { checkRateLimit } from './_rateLimit';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -45,16 +46,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'POST') {
+    // Rate limit: 5 fighters per minute per IP
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+    const rateLimit = checkRateLimit(`fighters:${clientIp}`, 5, 60000);
+    
+    if (!rateLimit.allowed) {
+      return res.status(429).json({ 
+        error: 'Rate limit exceeded. Try again in a minute.',
+        retryAfter: Math.ceil((rateLimit.resetTime - Date.now()) / 1000)
+      });
+    }
+
     const { name, stats, metadata } = req.body || {};
 
     if (!name || typeof name !== 'string') {
       return res.status(400).json({ error: 'name is required' });
     }
 
+    // Sanitize name
+    const sanitizedName = name.trim().slice(0, 30).replace(/[<>\"']/g, '');
+    
+    if (sanitizedName.length < 2) {
+      return res.status(400).json({ error: 'Name must be at least 2 characters' });
+    }
+
     const { data, error } = await supabase
       .from('fighters')
       .insert({ 
-        name, 
+        name: sanitizedName, 
         stats: stats || {}, 
         metadata: metadata || {},
         api_provider: 'openai',

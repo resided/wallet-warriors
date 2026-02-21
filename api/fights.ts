@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
+import { checkRateLimit } from './_rateLimit';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -47,10 +48,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'POST') {
+    // Rate limit: 10 fights per minute per IP
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+    const rateLimit = checkRateLimit(`fights:${clientIp}`, 10, 60000);
+    
+    if (!rateLimit.allowed) {
+      return res.status(429).json({ 
+        error: 'Rate limit exceeded. Try again in a minute.',
+        retryAfter: Math.ceil((rateLimit.resetTime - Date.now()) / 1000)
+      });
+    }
+
     const { fighter1_id, fighter2_id } = req.body || {};
 
     if (!fighter1_id || !fighter2_id) {
       return res.status(400).json({ error: 'fighter1_id and fighter2_id are required' });
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(fighter1_id) || !uuidRegex.test(fighter2_id)) {
+      return res.status(400).json({ error: 'Invalid fighter ID format' });
     }
 
     const [result1, result2] = await Promise.all([
