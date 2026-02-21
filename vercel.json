@@ -2,5 +2,6 @@
   "version": 2,
   "name": "fightbook",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "framework": "vite"
 }
