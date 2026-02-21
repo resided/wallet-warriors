@@ -8,36 +8,20 @@ const API = '/api';
 
 const WELCOME = [
   '',
-  '  ███████╗██╗ ██████╗ ██╗  ██╗████████╗██████╗  ██████╗  ██████╗ ██╗  ██╗',
-  '  ██╔════╝██║██╔════╝ ██║  ██║╚══██╔══╝██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝',
-  '  █████╗  ██║██║  ███╗███████║   ██║   ██████╔╝██║   ██║██║   ██║█████╔╝ ',
-  '  ██╔══╝  ██║██║   ██║██╔══██║   ██║   ██╔══██╗██║   ██║██║   ██║██╔═██╗ ',
-  '  ██║     ██║╚██████╔╝██║  ██║   ██║   ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗',
-  '  ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝',
+  '  [FIGHTBOOK v1.1.17]',
+  '  AI Combat Arena - Create fighters and watch them battle',
   '',
-  '  ═══════════════════════════════════════════════════════════════════',
-  '              AI Combat Arena  |  v1.1.17  |  Create. Fight. Win.',
-  '  ═══════════════════════════════════════════════════════════════════',
+  '  QUICK START:',
+  '  • Click [CREATE] at the top to make your first fighter',
+  '  • Go to ROSTER to see all fighters',
+  '  • Type: fight <name> vs <name>',
+  '  • Check RANKS for the leaderboard',
   '',
-  '  Welcome to FightBook — create fighters, match them up, watch them brawl.',
-  '',
-  '  ═══════════════════════════════════════════════════════════════════',
-  '  PLAY NOW (BROWSER)',
-  '  ═══════════════════════════════════════════════════════════════════',
-  '',
-  "  Type 'register'  → Create your first fighter",
-  "  Type 'fighters'  → See who's in the arena",
-  "  Type 'fight <name> vs <name>'  → Match them up",
-  "  Type 'random'    → Quick random fight",
-  '',
-  '  ═══════════════════════════════════════════════════════════════════',
-  '  OR INSTALL CLI',
-  '  ═══════════════════════════════════════════════════════════════════',
-  '',
-  '  $ npm install -g fightbook',
-  '  $ fightbook init my-fighter.md && fightbook fight a.md b.md',
-  '',
-  '  $FIGHT on Base: 0xfC01A7760CfE6a3f4D2635f0BdCaB992DB2a1b07',
+  '  OR TYPE:',
+  "  'register'  - Create fighter (opens visual creator)",
+  "  'help'      - List all commands",
+  "  'about'     - How FightBook works",
+  "  'faq'       - Common questions",
   '',
 ];
 
@@ -138,57 +122,94 @@ export default function TerminalCLI() {
 
     if (lower === 'help') {
       add([
-        { type: 'system', text: '╔════════════════════════════════════════════════════════╗' },
-        { type: 'system', text: '║                 FIGHTBOOK COMMANDS                     ║' },
-        { type: 'system', text: '╠════════════════════════════════════════════════════════╣' },
-        { type: 'system', text: '║  register           - Register a new fighter           ║' },
-        { type: 'system', text: '║  fighters           - List all registered fighters     ║' },
-        { type: 'system', text: '║  stats <name>       - View fighter stats               ║' },
-        { type: 'system', text: '║  fight <a> vs <b>   - Run a fight simulation           ║' },
-        { type: 'system', text: '║  random             - Random matchup                   ║' },
-        { type: 'system', text: '║  leaderboard        - Rankings by wins                 ║' },
-        { type: 'system', text: '║  history            - Recent fight history             ║' },
-        { type: 'system', text: '║  record <name>      - Fighter\'s fight record           ║' },
-        { type: 'system', text: '║  clear              - Clear terminal                   ║' },
-        { type: 'system', text: '║  about              - About FightBook                  ║' },
-        { type: 'system', text: '╚════════════════════════════════════════════════════════╝' },
+        { type: 'fight', text: '  [COMMANDS]' },
+        { type: 'output', text: '' },
+        { type: 'system', text: '  NAVIGATION:' },
+        { type: 'output', text: '  Use the top menu: CLI | ROSTER | RANKS | CREATE' },
+        { type: 'output', text: '' },
+        { type: 'system', text: '  CLI COMMANDS:' },
+        { type: 'output', text: '  register       Create a new fighter (opens visual creator)' },
+        { type: 'output', text: '  fighters       List all fighters in the arena' },
+        { type: 'output', text: '  fight a vs b   Run a fight between two fighters' },
+        { type: 'output', text: '  random         Quick fight with random matchup' },
+        { type: 'output', text: '  leaderboard    Show rankings by wins' },
+        { type: 'output', text: '  stats <name>   View detailed fighter stats' },
+        { type: 'output', text: '  history        Recent fight history' },
+        { type: 'output', text: '  record <name>  Fighter\'s win/loss record' },
+        { type: 'output', text: '' },
+        { type: 'system', text: '  INFO:' },
+        { type: 'output', text: '  about          What is FightBook and how it works' },
+        { type: 'output', text: '  faq            Frequently asked questions' },
+        { type: 'output', text: '  clear          Clear this terminal' },
+        { type: 'output', text: '' },
+        { type: 'output', text: '  Tip: Click [CREATE] at the top for the best experience.' },
       ]);
       return;
     }
 
     if (lower === 'about') {
       add([
-        { type: 'fight', text: '  ═══════════════════════════════════════════════════════════════' },
-        { type: 'fight', text: '                        WHAT IS FIGHTBOOK?' },
-        { type: 'fight', text: '  ═══════════════════════════════════════════════════════════════' },
+        { type: 'fight', text: '  [ABOUT FIGHTBOOK]' },
         { type: 'output', text: '' },
-        { type: 'output', text: '  FightBook is an AI combat arena where you create fighters and watch' },
-        { type: 'output', text: '  them battle in realistic MMA simulations. No controllers needed —' },
-        { type: 'output', text: '  the AI fights for you based on stats you set.' },
+        { type: 'output', text: '  FightBook is an AI-powered MMA combat simulator. Create fighters,' },
+        { type: 'output', text: '  customize their stats, and watch them battle in realistic 3-round' },
+        { type: 'output', text: '  fights with play-by-play commentary.' },
         { type: 'output', text: '' },
-        { type: 'system', text: '  HOW IT WORKS:' },
-        { type: 'output', text: '  1. Create a fighter — pick a name and archetype (striker, grappler, etc.)' },
-        { type: 'output', text: '  2. Fight — match them against other fighters in the arena' },
-        { type: 'output', text: '  3. Watch — 3-round battles with commentary, KOs, submissions' },
-        { type: 'output', text: '  4. Climb — win fights, rank up on the leaderboard' },
+        { type: 'system', text: '  QUICK START:' },
+        { type: 'output', text: '  1. Click [CREATE] or type "register" to make a fighter' },
+        { type: 'output', text: '  2. Go to ROSTER to see all fighters' },
+        { type: 'output', text: '  3. Type "fight <name> vs <name>" to run a fight' },
+        { type: 'output', text: '  4. Check RANKS to see the leaderboard' },
         { type: 'output', text: '' },
-        { type: 'system', text: '  THE STATS SYSTEM:' },
-        { type: 'output', text: '  Every fighter has 23 stats (striking, wrestling, cardio, chin, etc.)' },
-        { type: 'output', text: '  You get 1200 points to distribute. Higher stats = better performance.' },
+        { type: 'system', text: '  THE ENGINE:' },
+        { type: 'output', text: '  • Position-based combat (standing, clinch, ground)' },
+        { type: 'output', text: '  • 6 core stats: Striking, Grappling, Stamina, Power, Chin, Speed' },
+        { type: 'output', text: '  • Real fight outcomes: KO, TKO, Submission, or Decision' },
+        { type: 'output', text: '  • Fighter templates based on MMA legends' },
         { type: 'output', text: '' },
-        { type: 'system', text: '  PLAY IN TERMINAL (CLI):' },
-        { type: 'output', text: '  $ npm install -g fightbook' },
-        { type: 'output', text: '  $ fightbook init my-fighter.md' },
-        { type: 'output', text: '  $ fightbook fight a.md b.md' },
+        { type: 'system', text: '  INSTALL CLI VERSION:' },
+        { type: 'output', text: '  npm install -g fightbook' },
         { type: 'output', text: '' },
-        { type: 'system', text: '  PLAY IN BROWSER:' },
-        { type: 'output', text: '  • register  — Create your first fighter' },
-        { type: 'output', text: '  • fighters  — See who else is in the arena' },
-        { type: 'output', text: '  • fight <name> vs <name>  — Run a fight' },
-        { type: 'output', text: '  • random    — Quick random matchup' },
-        { type: 'output', text: '  • leaderboard  — See the rankings' },
+        { type: 'output', text: '  Type "faq" for frequently asked questions.' },
+      ]);
+      return;
+    }
+
+    if (lower === 'faq') {
+      add([
+        { type: 'fight', text: '  [FREQUENTLY ASKED QUESTIONS]' },
         { type: 'output', text: '' },
-        { type: 'fight', text: '  ═══════════════════════════════════════════════════════════════' },
+        { type: 'system', text: '  Q: How do I create a fighter?' },
+        { type: 'output', text: '  A: Click the red [CREATE] button at the top, or type "register" in' },
+        { type: 'output', text: '     the terminal. Choose a template (like McGregor or Khabib) and' },
+        { type: 'output', text: '     customize the stats.' },
+        { type: 'output', text: '' },
+        { type: 'system', text: '  Q: How do fights work?' },
+        { type: 'output', text: '  A: Fights are simulated based on your fighter stats. Higher striking' },
+        { type: 'output', text: '     = more/better punches. Higher wrestling = more takedowns. The AI' },
+        { type: 'output', text: '     generates realistic play-by-play commentary for each exchange.' },
+        { type: 'output', text: '' },
+        { type: 'system', text: '  Q: What are the 6 stats?' },
+        { type: 'output', text: '  • STRIKING: Punching technique and accuracy' },
+        { type: 'output', text: '  • GRAPPLING: Wrestling, takedowns, ground control' },
+        { type: 'output', text: '  • STAMINA: Cardio - affects late-round performance' },
+        { type: 'output', text: '  • POWER: Knockout power and damage output' },
+        { type: 'output', text: '  • CHIN: Ability to take punishment' },
+        { type: 'output', text: '  • SPEED: Hand speed and footwork' },
+        { type: 'output', text: '' },
+        { type: 'system', text: '  Q: How do I win?' },
+        { type: 'output', text: '  A: Win fights to climb the leaderboard. Outcomes are:' },
+        { type: 'output', text: '     KO (knockout), TKO (ref stoppage), SUB (submission), or' },
+        { type: 'output', text: '     DEC (judges decision after 3 rounds).' },
+        { type: 'output', text: '' },
+        { type: 'system', text: '  Q: What is the CLI version?' },
+        { type: 'output', text: '  A: A command-line version you can install with npm. Good for' },
+        { type: 'output', text: '     creating fighters locally and battling them.' },
+        { type: 'output', text: '' },
+        { type: 'system', text: '  Q: Is there a token?' },
+        { type: 'output', text: '  A: Yes - $FIGHT on Base. Contract: 0xfC01...2a1b07' },
+        { type: 'output', text: '' },
+        { type: 'output', text: '  More questions? DM @0xreside on X.' },
       ]);
       return;
     }
@@ -706,13 +727,9 @@ export default function TerminalCLI() {
         </div>
       </div>
 
-      {/* Status bar */}
-      <div className="flex items-center justify-between px-4 py-1.5 border-t border-zinc-800 bg-zinc-900 text-xs text-zinc-600 shrink-0">
-        <span>FightBook CLI</span>
-        <span>Create. Fight. Win.</span>
-        <span>
-          {processing ? '⏳ Processing...' : registerMode ? `📝 Registering: ${registerMode.step}` : `${history.length} lines`}
-        </span>
+      {/* Input hint */}
+      <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-900 text-xs text-zinc-600 shrink-0">
+        <span>Type 'help' for commands | 'about' for info | 'faq' for common questions</span>
       </div>
     </div>
   );
