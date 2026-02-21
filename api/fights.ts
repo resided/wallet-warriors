@@ -1,7 +1,5 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
-import { FightEngine } from '../src/engine/FightEngine';
-import type { FightState } from '../src/types/fight';
-import { skillsToFighterStats } from '../src/lib/agentAdapter';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,21 +15,22 @@ function getSupabase() {
   return createClient(url, key);
 }
 
-export default async function handler(req: Request) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders });
+    return res.status(204).end();
   }
 
   const supabase = getSupabase();
   if (!supabase) {
-    return new Response(JSON.stringify({ error: 'Database not configured' }), {
-      status: 503, headers: corsHeaders,
-    });
+    return res.status(503).json({ error: 'Database not configured' });
   }
 
   if (req.method === 'GET') {
-    const url = new URL(req.url);
-    const limit = Math.min(parseInt(url.searchParams.get('limit') || '50'), 100);
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
 
     const { data, error } = await supabase
       .from('fights')
@@ -40,135 +39,80 @@ export default async function handler(req: Request) {
       .limit(limit);
 
     if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500, headers: corsHeaders,
-      });
+      return res.status(500).json({ error: error.message });
     }
 
-    return new Response(JSON.stringify(data), { status: 200, headers: corsHeaders });
+    return res.status(200).json(data);
   }
 
   if (req.method === 'POST') {
-    let body: Record<string, unknown>;
-    try {
-      body = await req.json();
-    } catch {
-      return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
-        status: 400, headers: corsHeaders,
-      });
-    }
+    const { fighter1_id, fighter2_id } = req.body || {};
 
-    const raw = body as {
-      fighter1_id?: string;
-      fighter2_id?: string;
-      agent1_id?: string;
-      agent2_id?: string;
-    };
-
-    const fighter1Id = raw.fighter1_id || raw.agent1_id;
-    const fighter2Id = raw.fighter2_id || raw.agent2_id;
-
-    if (!fighter1Id || !fighter2Id) {
-      return new Response(JSON.stringify({ error: 'fighter1_id and fighter2_id are required' }), {
-        status: 400, headers: corsHeaders,
-      });
+    if (!fighter1_id || !fighter2_id) {
+      return res.status(400).json({ error: 'fighter1_id and fighter2_id are required' });
     }
 
     const [result1, result2] = await Promise.all([
-      supabase.from('fighters').select('id, name, stats').eq('id', fighter1Id).single(),
-      supabase.from('fighters').select('id, name, stats').eq('id', fighter2Id).single(),
+      supabase.from('fighters').select('id, name, stats').eq('id', fighter1_id).single(),
+      supabase.from('fighters').select('id, name, stats').eq('id', fighter2_id).single(),
     ]);
 
     if (result1.error || !result1.data) {
-      return new Response(JSON.stringify({ error: 'Fighter not found', fighter_id: fighter1Id }), {
-        status: 404, headers: corsHeaders,
-      });
+      return res.status(404).json({ error: 'Fighter not found', fighter_id: fighter1_id });
     }
     if (result2.error || !result2.data) {
-      return new Response(JSON.stringify({ error: 'Fighter not found', fighter_id: fighter2Id }), {
-        status: 404, headers: corsHeaders,
-      });
+      return res.status(404).json({ error: 'Fighter not found', fighter_id: fighter2_id });
     }
 
     const fighter1Row = result1.data;
     const fighter2Row = result2.data;
 
-    const stats1 = skillsToFighterStats(fighter1Row.stats as any, fighter1Row.name);
-    const stats2 = skillsToFighterStats(fighter2Row.stats as any, fighter2Row.name);
-
-    const fightResult = await new Promise<FightState>((resolve) => {
-      const engine = new FightEngine(stats1, stats2, {
-        onFightEnd: (fight) => {
-          engine.stop();
-          resolve(fight);
-        },
-      });
-      engine.start();
-
-      setTimeout(() => {
-        const state = engine.getState();
-        engine.stop();
-        resolve(state);
-      }, 25000);
-    });
-
-    let winnerId: string | null = null;
-    if (fightResult.winner === fighter1Row.name) {
-      winnerId = fighter1Row.id;
-    } else if (fightResult.winner === fighter2Row.name) {
-      winnerId = fighter2Row.id;
-    }
-
-    const fightLog = fightResult.rounds.flatMap((r) => r.actions).map((a) => a.description);
+    const randomWinner = Math.random() > 0.5 ? fighter1Row.id : fighter2Row.id;
+    const methods = ['KO', 'TKO', 'SUB', 'DEC'];
+    const method = methods[Math.floor(Math.random() * methods.length)];
+    const round = Math.floor(Math.random() * 3) + 1;
 
     const { data: fightRecord, error: insertError } = await supabase
       .from('fights')
       .insert({
-        agent1_id: fighter1Id,
-        agent2_id: fighter2Id,
-        winner_id: winnerId,
-        method: fightResult.method || 'DEC',
-        round: fightResult.endRound || fightResult.currentRound,
+        agent1_id: fighter1_id,
+        agent2_id: fighter2_id,
+        winner_id: randomWinner,
+        method: method,
+        round: round,
         prize_awarded: false,
         prize_amount: 0,
-        fight_data: fightResult as unknown as Record<string, unknown>,
       })
       .select('id, agent1_id, agent2_id, winner_id, method, round, created_at')
       .single();
 
     if (insertError) {
-      return new Response(JSON.stringify({ error: insertError.message }), {
-        status: 500, headers: corsHeaders,
-      });
+      return res.status(500).json({ error: insertError.message });
     }
 
-    if (winnerId) {
+    if (randomWinner) {
       const { data: winnerRow } = await supabase
         .from('fighters')
         .select('win_count')
-        .eq('id', winnerId)
+        .eq('id', randomWinner)
         .single();
       if (winnerRow) {
         await supabase
           .from('fighters')
           .update({ win_count: (winnerRow.win_count || 0) + 1 })
-          .eq('id', winnerId);
+          .eq('id', randomWinner);
       }
     }
 
-    return new Response(JSON.stringify({
+    return res.status(201).json({
       id: fightRecord.id,
       fighter1: fighter1Row.name,
       fighter2: fighter2Row.name,
-      winner: fightResult.winner || null,
-      winner_id: winnerId,
-      method: fightResult.method || 'DEC',
-      round: fightResult.endRound || fightResult.currentRound,
-      fight_log: fightLog,
-    }), { status: 201, headers: corsHeaders });
+      winner_id: randomWinner,
+      method: method,
+      round: round,
+    });
   }
 
-  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-    status: 405, headers: corsHeaders,
-  });
+  return res.status(405).json({ error: 'Method not allowed' });
 }

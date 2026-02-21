@@ -1,3 +1,4 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 
 const corsHeaders = {
@@ -14,21 +15,22 @@ function getSupabase() {
   return createClient(url, key);
 }
 
-export default async function handler(req: Request) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders });
+    return res.status(204).end();
   }
 
   const supabase = getSupabase();
   if (!supabase) {
-    return new Response(JSON.stringify({ error: 'Database not configured' }), {
-      status: 503, headers: corsHeaders,
-    });
+    return res.status(503).json({ error: 'Database not configured' });
   }
 
   if (req.method === 'GET') {
-    const url = new URL(req.url);
-    const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100);
+    const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
 
     const { data, error } = await supabase
       .from('fighters')
@@ -37,9 +39,7 @@ export default async function handler(req: Request) {
       .limit(limit);
 
     if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500, headers: corsHeaders,
-      });
+      return res.status(500).json({ error: error.message });
     }
 
     const entries = (data || []).map((f, i) => ({
@@ -51,10 +51,8 @@ export default async function handler(req: Request) {
       losses: (f.metadata as any)?.losses || 0,
     }));
 
-    return new Response(JSON.stringify(entries), { status: 200, headers: corsHeaders });
+    return res.status(200).json(entries);
   }
 
-  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-    status: 405, headers: corsHeaders,
-  });
+  return res.status(405).json({ error: 'Method not allowed' });
 }
