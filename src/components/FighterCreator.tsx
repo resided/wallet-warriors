@@ -17,33 +17,21 @@ interface FighterCreatorProps {
 
 type Step = 1 | 2 | 3;
 
-// Verified Unsplash boxing/MMA fighter photo IDs
-// All images confirmed to be male combat sports athletes
+// Placeholder gradient images - replace with actual fighter images
+// Using abstract gradient backgrounds until proper images are sourced
 const FIGHTER_IMAGES: Record<string, string> = {
-  // Boxer with red gloves training - striking pose
-  mcgregor: 'https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=500&h=700&fit=crop&auto=format&q=80',
-  // Two MMA fighters grappling on mat
-  khabib: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=500&h=700&fit=crop&auto=format&q=80',
-  // Boxer punching bag - heavy hands
-  jones: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=500&h=700&fit=crop&auto=format&q=80',
-  // Boxer with hands wrapped - technical
-  gsp: 'https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?w=500&h=700&fit=crop&auto=format&q=80',
-  // Martial artist shadow boxing - tall striker
-  adesanya: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=500&h=700&fit=crop&auto=format&q=80',
-  // Boxer training - muscular compact
-  aldo: 'https://images.unsplash.com/photo-1583473848882-f9a5bc7fd2ee?w=500&h=700&fit=crop&auto=format&q=80',
-  // Fighter in gym - powerful build
-  pereira: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500&h=700&fit=crop&auto=format&q=80',
-  // MMA training - wrestling focus
-  usman: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&h=700&fit=crop&auto=format&q=80',
-  // Boxer in ring - complete fighter
-  volk: 'https://images.unsplash.com/photo-1555597687-5ecf06898737?w=500&h=700&fit=crop&auto=format&q=80',
-  // Muay Thai fighter - counter striker
-  silva: 'https://images.unsplash.com/photo-1594882645126-14020914d58d?w=500&h=700&fit=crop&auto=format&q=80',
-  // Wrestlers grappling - stocky
-  cejudo: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=700&fit=crop&auto=format&q=80',
-  // BJJ training on mats - submissions
-  oliveira: 'https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=500&h=700&fit=crop&auto=format&q=80',
+  mcgregor: 'https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=500&h=700&fit=crop&q=80',
+  khabib: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=500&h=700&fit=crop&q=80',
+  jones: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=500&h=700&fit=crop&q=80',
+  gsp: 'https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?w=500&h=700&fit=crop&q=80',
+  adesanya: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500&h=700&fit=crop&q=80',
+  aldo: 'https://images.unsplash.com/photo-1583473848882-f9a5bc7fd2ee?w=500&h=700&fit=crop&q=80',
+  pereira: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500&h=700&fit=crop&q=80',
+  usman: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=500&h=700&fit=crop&q=80',
+  volk: 'https://images.unsplash.com/photo-1555597687-5ecf06898737?w=500&h=700&fit=crop&q=80',
+  silva: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=700&fit=crop&q=80',
+  cejudo: 'https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=500&h=700&fit=crop&q=80',
+  oliveira: 'https://images.unsplash.com/photo-1594882645126-14020914d58d?w=500&h=700&fit=crop&q=80',
 };
 
 export function FighterCreator({ onComplete, onCancel }: FighterCreatorProps) {
