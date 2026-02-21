@@ -405,9 +405,9 @@ function StepOneTemplates({
   isAnimating: boolean;
 }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      {/* Left: Preview Panel */}
-      <div className="lg:col-span-4">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Left: Preview Panel - Hidden on mobile, sticky on desktop */}
+      <div className="hidden lg:block lg:col-span-4">
         <div className="sticky top-40">
           <div className="border border-zinc-800 bg-zinc-950 overflow-hidden">
             <div className="p-4 border-b border-zinc-800 bg-zinc-900/30">
@@ -469,14 +469,38 @@ function StepOneTemplates({
         </div>
       </div>
 
-      {/* Right: Template Grid - Image-focused cards like Figma */}
-      <div className="lg:col-span-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-2">Choose Your Fighter Template</h2>
-          <p className="text-zinc-500">Model your fighter after MMA legends and current champions</p>
+      {/* Mobile Selected Preview */}
+      {selected && (
+        <div className="lg:hidden mb-4 border border-zinc-800 bg-zinc-950">
+          <div className="flex items-center gap-4 p-4">
+            <div className="w-20 h-20 shrink-0">
+              <PixelAvatar fighterId={selected.id} size="small" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className={`inline-block px-2 py-0.5 text-[10px] font-bold border mb-1 ${getTierColor(selected.tier)}`}>
+                {selected.tier.toUpperCase()}
+              </div>
+              <h3 className="font-bold text-white text-lg truncate">{selected.name}</h3>
+              <p className="text-red-500/80 text-xs truncate">"{selected.nickname}"</p>
+              <div className="flex items-center gap-4 mt-2 text-xs text-zinc-500">
+                <span>{selected.weightClass}</span>
+                <span className={`font-black ${getStatColor(calculateOverallRating(selected.stats))}`}>
+                  OVR {calculateOverallRating(selected.stats)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Right: Template Grid */}
+      <div className="col-span-1 lg:col-span-8">
+        <div className="mb-4">
+          <h2 className="text-xl sm:text-2xl font-bold mb-2">Choose Your Fighter Template</h2>
+          <p className="text-zinc-500 text-sm">Model your fighter after MMA legends and current champions</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {FIGHTER_TEMPLATES.map((fighter) => (
             <button
               key={fighter.id}
@@ -487,52 +511,50 @@ function StepOneTemplates({
                   : 'border-zinc-800 hover:border-zinc-600'
               }`}
             >
-              {/* Card Layout - Image on left, larger like Figma */}
-              <div className="flex h-40">
+              {/* Card Layout - Compact and mobile-friendly */}
+              <div className="flex">
                 {/* Pixel Art Avatar */}
-                <div className="w-36 h-full relative overflow-hidden shrink-0">
+                <div className="w-28 sm:w-32 h-32 sm:h-36 relative overflow-hidden shrink-0">
                   <PixelAvatar fighterId={fighter.id} size="small" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-zinc-950" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-zinc-950/80" />
                 </div>
 
-                {/* Info Section */}
-                <div className="flex-1 p-4 bg-zinc-950 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <div>
-                        <h3 className="font-bold text-white text-lg leading-tight">{fighter.name}</h3>
-                        <p className="text-red-500/80 text-xs">"{fighter.nickname}"</p>
-                      </div>
-                      <span className="px-2 py-0.5 text-xs font-bold border border-zinc-700 text-zinc-400 bg-zinc-900/50 shrink-0">
-                        {fighter.weightClass}
-                      </span>
+                {/* Info Section - Compact */}
+                <div className="flex-1 p-3 bg-zinc-950 flex flex-col justify-between min-w-0">
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-bold text-white text-base sm:text-lg leading-tight truncate">{fighter.name}</h3>
+                      <p className="text-red-500/80 text-xs truncate">"{fighter.nickname}"</p>
                     </div>
-
-                    <p className="text-zinc-600 text-xs mb-3">{fighter.style}</p>
-
-                    {/* Mini Stat Bars - Horizontal layout */}
-                    <div className="space-y-1.5">
-                      <MiniStatBar label="STR" value={fighter.stats.striking} />
-                      <MiniStatBar label="GRP" value={fighter.stats.grappling} />
-                      <MiniStatBar label="PWR" value={fighter.stats.power} />
-                    </div>
+                    <span className="px-1.5 py-0.5 text-[10px] font-bold border border-zinc-700 text-zinc-400 bg-zinc-900/50 shrink-0">
+                      {fighter.weightClass}
+                    </span>
                   </div>
 
-                  {/* Bottom stats row */}
-                  <div className="flex items-center justify-between pt-2 border-t border-zinc-800/50 mt-2">
+                  {/* Style - Truncated */}
+                  <p className="text-zinc-600 text-xs truncate mt-1">{fighter.style}</p>
+
+                  {/* Mini Stat Bars */}
+                  <div className="space-y-1 mt-2">
+                    <CompactStatBar label="STR" value={fighter.stats.striking} />
+                    <CompactStatBar label="GRP" value={fighter.stats.grappling} />
+                    <CompactStatBar label="PWR" value={fighter.stats.power} />
+                  </div>
+
+                  {/* Footer - Stance & Overall */}
+                  <div className="flex items-center justify-between pt-1.5 border-t border-zinc-800/50 mt-2">
                     <span className="text-zinc-600 text-xs">{fighter.stance}</span>
-                    <span className={`text-lg font-black ${getStatColor(calculateOverallRating(fighter.stats))}`}>
+                    <span className={`text-xl font-black ${getStatColor(calculateOverallRating(fighter.stats))}`}>
                       {calculateOverallRating(fighter.stats)}
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Selected Overlay */}
+              {/* Selected Indicator */}
               {selected?.id === fighter.id && (
-                <div className="absolute inset-0 border-2 border-red-600 pointer-events-none">
-                  <div className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full shadow-lg shadow-red-500/50 animate-pulse" />
-                </div>
+                <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full shadow-lg shadow-red-500/50 animate-pulse" />
               )}
             </button>
           ))}
@@ -570,8 +592,21 @@ function PreviewStatBar({ label, value }: { label: string; value: number }) {
   );
 }
 
+function CompactStatBar({ label, value }: { label: string; value: number }) {
+  const colorClass = value >= 90 ? 'bg-red-500' : value >= 80 ? 'bg-orange-500' : value >= 70 ? 'bg-yellow-500' : value >= 60 ? 'bg-blue-500' : 'bg-zinc-600';
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-[10px] text-zinc-500 w-5 font-bold">{label}</span>
+      <div className="flex-1 h-1 bg-zinc-800 rounded-sm overflow-hidden">
+        <div className={`h-full ${colorClass}`} style={{ width: `${value}%` }} />
+      </div>
+      <span className="text-[10px] text-zinc-400 w-4 text-right">{value}</span>
+    </div>
+  );
+}
+
 function MiniStatBar({ label, value }: { label: string; value: number }) {
-  const colorClass = value >= 90 ? 'bg-red-500' : value >= 80 ? 'bg-orange-500' : value >= 70 ? 'bg-yellow-500' : 'bg-zinc-600';
+  const colorClass = value >= 90 ? 'bg-red-500' : value >= 80 ? 'bg-orange-500' : value >= 70 ? 'bg-yellow-500' : value >= 60 ? 'bg-blue-500' : 'bg-zinc-600';
   return (
     <div className="flex items-center gap-2">
       <span className="text-xs text-zinc-600 w-6 font-medium">{label}</span>
