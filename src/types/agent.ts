@@ -418,7 +418,7 @@ export function detectArchetype(skills: SkillsMdConfig): AgentPersonality['arche
 // Calculate points spent (each point above the base costs 1)
 export function calculatePointsSpent(skills: SkillsMdConfig): number {
   return POINT_CONSUMING_STATS.reduce((total, stat) => {
-    const value = skills[stat] || 0;
+    const value = Number(skills[stat]) || 0;
     return total + Math.max(0, value - POINT_BUDGET.STARTING_BASE);
   }, 0);
 }
@@ -431,7 +431,7 @@ export function calculatePointsRemaining(skills: SkillsMdConfig): number {
 // Check if a stat can be increased
 export function canIncreaseStat(skills: SkillsMdConfig, stat: keyof SkillsMdConfig): boolean {
   if (!POINT_CONSUMING_STATS.includes(stat as any)) return true; // Mental stats are free
-  const currentValue = skills[stat] || 0;
+  const currentValue = Number(skills[stat]) || 0;
   if (currentValue >= POINT_BUDGET.MAX_STAT) return false;
   return calculatePointsRemaining(skills) > 0;
 }

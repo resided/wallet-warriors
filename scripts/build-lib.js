@@ -56,13 +56,21 @@ if (existsSync(cliPath)) {
   chmodSync(cliPath, 0o755);
 }
 
-// Generate .d.ts files using tsc
+// Generate .d.ts files using dedicated lib tsconfig
+// (tsconfig.app.json has allowImportingTsExtensions which requires noEmit:true
+//  and silently blocks declaration generation — tsconfig.lib.json avoids this)
 try {
-  execSync('npx tsc --declaration --emitDeclarationOnly --outDir dist', {
-    stdio: 'pipe'
+  execSync('npx tsc --project tsconfig.lib.json', {
+    stdio: 'inherit'
   });
 } catch (e) {
-  // TSC may error on JSX files, that's ok
+  console.error('Warning: TypeScript declaration generation failed:', e.message);
+}
+
+// Verify index.d.ts was generated
+if (!existsSync('dist/index.d.ts')) {
+  console.error('❌ dist/index.d.ts was not generated — TypeScript consumers will have no types');
+  process.exit(1);
 }
 
 console.log('✅ Library built successfully');

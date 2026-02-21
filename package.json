@@ -15,15 +15,19 @@
   "bin": {
     "fightbook": "dist/cli.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "SKILL.md"
   ],
   "scripts": {
     "dev": "vite",
     "build": "vite build && npm run build:lib",
     "build:dev": "vite build --mode development",
-    "build:lib": "tsc --declaration --emitDeclarationOnly --outDir dist && node scripts/build-lib.js",
+    "build:lib": "node scripts/build-lib.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",

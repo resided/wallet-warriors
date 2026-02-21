@@ -143,14 +143,14 @@ async function runFight(file1: string, file2: string) {
       rivalries: [],
       achievements: [],
     },
-    social: { agentName: 'agent1' },
+    social: { agentName: 'agent1', rewardsOptIn: false },
   };
-  
+
   const agent2: CompleteAgent = {
     ...agent1,
     metadata: { ...agent1.metadata, id: 'agent_2', name: skills2.name || 'Agent 2' },
     skills: skills2 as any,
-    social: { agentName: 'agent2' },
+    social: { agentName: 'agent2', rewardsOptIn: false },
   };
   
   console.log(`\n🥊 ${agent1.skills.name} vs ${agent2.skills.name}\n`);

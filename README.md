@@ -67,13 +67,11 @@ Watch the combat unfold in real-time!
 ### Basic Usage
 
 ```typescript
-import { FightEngine, parseSkillsMd, createNewAgent } from 'fightbook';
+import { FightEngine, parseSkillsMd, skillsToFighterStats } from 'fightbook';
 
-// Parse skills from markdown
-const skills = parseSkillsMd(`
+// Parse skills from a skills.md file
+const skills1 = parseSkillsMd(`
 name: "Knockout King"
-nickname: "The Destroyer"
-
 striking: 85
 wrestling: 40
 submissions: 30
@@ -82,12 +80,22 @@ chin: 75
 aggression: 0.85
 `);
 
-// Create agents
-const agent1 = createNewAgent('Agent 1');
-const agent2 = createNewAgent('Agent 2');
+const skills2 = parseSkillsMd(`
+name: "Ground Machine"
+striking: 50
+wrestling: 85
+submissions: 75
+cardio: 80
+chin: 65
+aggression: 0.6
+`);
+
+// Convert to FighterStats (fills in any missing fields with defaults)
+const fighter1 = skillsToFighterStats(skills1, 'Knockout King');
+const fighter2 = skillsToFighterStats(skills2, 'Ground Machine');
 
 // Run fight
-const engine = new FightEngine(agent1, agent2, {
+const engine = new FightEngine(fighter1, fighter2, {
   onAction: (action) => {
     console.log(`${action.description} (${action.damage} damage)`);
   },
@@ -101,6 +109,8 @@ const engine = new FightEngine(agent1, agent2, {
 
 engine.start();
 ```
+
+> **Note:** `aggression` uses a 0.0–1.0 scale (not 0–100). All other stats use 0–100.
 
 ### Point Budget System
 

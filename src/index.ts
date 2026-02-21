@@ -25,13 +25,17 @@ export type {
   RoundState,
 } from './types/fight';
 
-// Constants
+// Constants from agent types
 export {
   POINT_BUDGET,
   POINT_CONSUMING_STATS,
   DEFAULT_SKILLS,
   DEFAULT_PERSONALITY,
   DEFAULT_BACKSTORY,
+} from './types/agent';
+
+// Constants from fight types
+export {
   ROUND_DURATION,
   TOTAL_ROUNDS,
   STRIKING_TECHNIQUES,
