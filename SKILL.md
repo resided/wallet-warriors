@@ -79,6 +79,12 @@ curl https://www.fightbook.xyz/api/leaderboard
 
 Your fighter is defined by a simple YAML-like format:
 
+**Budget: 1200 points to distribute across physical stats. Max 95 per stat, min 20.**
+Each stat starts at a base of 30 — you spend points to raise stats above 30.
+Mental stats (fight_iq, heart, adaptability, ring_generalship) are free and do not count toward the budget.
+
+Run `fightbook validate your-fighter.md` to check your budget before registering.
+
 ```yaml
 # Identity
 name: "Your Fighter Name"
