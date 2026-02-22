@@ -18,7 +18,7 @@ const WELCOME = [
   '  • Check RANKS for the leaderboard',
   '',
   '  OR TYPE:',
-  "  'register'  - Create fighter (opens visual creator)",
+  "  'register'  - Create a fighter via CLI",
   "  'help'      - List all commands",
   "  'about'     - How FightBook works",
   "  'faq'       - Common questions",
@@ -128,7 +128,7 @@ export default function TerminalCLI() {
         { type: 'output', text: '  Use the top menu: CLI | ROSTER | RANKS | CREATE' },
         { type: 'output', text: '' },
         { type: 'system', text: '  CLI COMMANDS:' },
-        { type: 'output', text: '  register       Create a new fighter (opens visual creator)' },
+        { type: 'output', text: '  register       Create a new fighter (name → X handle → archetype)' },
         { type: 'output', text: '  fighters       List all fighters in the arena' },
         { type: 'output', text: '  fight a vs b   Run a fight between two fighters' },
         { type: 'output', text: '  random         Quick fight with random matchup' },
@@ -156,7 +156,7 @@ export default function TerminalCLI() {
         { type: 'output', text: '  fights with play-by-play commentary.' },
         { type: 'output', text: '' },
         { type: 'system', text: '  QUICK START:' },
-        { type: 'output', text: '  1. Click [CREATE] or type "register" to make a fighter' },
+        { type: 'output', text: '  1. Type "register" to create a fighter, or use [CREATE] in the nav' },
         { type: 'output', text: '  2. Go to ROSTER to see all fighters' },
         { type: 'output', text: '  3. Type "fight <name> vs <name>" to run a fight' },
         { type: 'output', text: '  4. Check RANKS to see the leaderboard' },
@@ -180,9 +180,9 @@ export default function TerminalCLI() {
         { type: 'fight', text: '  [FREQUENTLY ASKED QUESTIONS]' },
         { type: 'output', text: '' },
         { type: 'system', text: '  Q: How do I create a fighter?' },
-        { type: 'output', text: '  A: Click the red [CREATE] button at the top, or type "register" in' },
-        { type: 'output', text: '     the terminal. Choose a template (like McGregor or Khabib) and' },
-        { type: 'output', text: '     customize the stats.' },
+        { type: 'output', text: '  A: Type "register" in the terminal for the CLI flow (name →' },
+        { type: 'output', text: '     X handle → archetype → auto-assigned stats). Or use the' },
+        { type: 'output', text: '     [CREATE] button in the nav for the visual creator.' },
         { type: 'output', text: '' },
         { type: 'system', text: '  Q: How do fights work?' },
         { type: 'output', text: '  A: Fights are simulated based on your fighter stats. Higher striking' },
@@ -220,12 +220,15 @@ export default function TerminalCLI() {
     }
 
     if (lower === 'register') {
+      setRegisterMode({ step: 'name', data: {} });
       add([
-        { type: 'system', text: '  Opening Fighter Creator...' },
-        { type: 'output', text: '  Use the visual interface to create your fighter.' },
+        { type: 'fight', text: '  ═══════════════════════════════════════════════════════════════' },
+        { type: 'fight', text: '  REGISTER FIGHTER' },
+        { type: 'fight', text: '  ═══════════════════════════════════════════════════════════════' },
+        { type: 'output', text: '' },
+        { type: 'output', text: '  Step 1/3: Enter fighter name:' },
+        { type: 'system', text: '  (Escape to cancel)' },
       ]);
-      // Dispatch event to open creator
-      window.dispatchEvent(new CustomEvent('openFighterCreator'));
       return;
     }
 
@@ -627,12 +630,12 @@ export default function TerminalCLI() {
         } else {
           add([
             { type: 'fight', text: '' },
-            { type: 'fight', text: `  ✅ ${data.name} has entered the arena!` },
+            { type: 'fight', text: `  >> ${data.name} has entered the arena!` },
             { type: 'output', text: `  Archetype: ${arch}` },
             { type: 'output', text: `  X Handle: ${data.xHandle}` },
             { type: 'output', text: `  ID: ${result.id}` },
             { type: 'output', text: '' },
-            { type: 'system', text: '  📝 Stats were auto-assigned based on your archetype.' },
+            { type: 'system', text: '  Stats auto-assigned based on your archetype.' },
             { type: 'system', text: '  Type \'stats ' + data.name.toLowerCase() + '\' to see full breakdown.' },
             { type: 'output', text: '' },
             { type: 'output', text: `  Type 'fight ${data.name.toLowerCase()} vs <opponent>' to battle!` },
