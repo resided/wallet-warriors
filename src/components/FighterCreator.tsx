@@ -291,19 +291,8 @@ export function FighterCreator({ onComplete, onCancel }: FighterCreatorProps) {
       <div className="border-b border-zinc-800 bg-zinc-950/90 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* ASCII Logo */}
             <div className="flex items-center gap-4">
-              <pre className="text-red-500 text-xs leading-none hidden sm:block">
-{`███████╗██╗ ██████╗ ██╗  ██╗████████╗██████╗  ██████╗  ██████╗ ██╗  ██╗
-██╔════╝██║██╔════╝ ██║  ██║╚══██╔══╝██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝
-█████╗  ██║██║  ███╗███████║   ██║   ██████╔╝██║   ██║██║   ██║█████╔╝ 
-██╔══╝  ██║██║   ██║██╔══██║   ██║   ██╔══██╗██║   ██║██║   ██║██╔═██╗ 
-██║     ██║╚██████╔╝██║  ██║   ██║   ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗
-╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝`}
-              </pre>
-              <div className="sm:hidden">
-                <span className="text-red-500 font-black text-xl">FB</span>
-              </div>
+              <img src="/fightbook-logo.png" alt="FightBook" className="h-8 w-auto" />
               <div className="hidden lg:block pl-4 border-l border-zinc-800">
                 <p className="text-xs text-zinc-500 uppercase tracking-wider">Create Fighter</p>
                 <p className="text-xs text-zinc-600">Step {step} of 3</p>
