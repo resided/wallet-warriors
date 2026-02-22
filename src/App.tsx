@@ -22,6 +22,8 @@ function App() {
     nickname: string;
     templateId: string;
     stats: { striking: number; grappling: number; stamina: number; power: number; chin: number; speed: number };
+    xHandle?: string;
+    walletAddress?: string;
   }) => {
     try {
       const res = await fetch('/api/fighters', {
@@ -30,7 +32,12 @@ function App() {
         body: JSON.stringify({
           name: fighter.name,
           stats: fighter.stats,
-          metadata: { nickname: fighter.nickname, templateId: fighter.templateId },
+          metadata: {
+            nickname: fighter.nickname,
+            templateId: fighter.templateId,
+            xHandle: fighter.xHandle || undefined,
+            walletAddress: fighter.walletAddress || undefined,
+          },
         }),
       });
 

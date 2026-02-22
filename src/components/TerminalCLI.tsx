@@ -226,7 +226,7 @@ export default function TerminalCLI() {
         { type: 'fight', text: '  REGISTER FIGHTER' },
         { type: 'fight', text: '  ═══════════════════════════════════════════════════════════════' },
         { type: 'output', text: '' },
-        { type: 'output', text: '  Step 1/3: Enter fighter name:' },
+        { type: 'output', text: '  Step 1/4: Enter fighter name:' },
         { type: 'system', text: '  (Escape to cancel)' },
       ]);
       return;
@@ -572,7 +572,7 @@ export default function TerminalCLI() {
       add([
         { type: 'output', text: `  Name: ${value}` },
         { type: 'output', text: '' },
-        { type: 'output', text: '  Step 2/3: Enter your X (Twitter) handle:' },
+        { type: 'output', text: '  Step 2/4: Enter your X (Twitter) handle:' },
         { type: 'output', text: '  (e.g., @elonmusk or elonmusk)' },
         { type: 'system', text: '  This links the fighter to you for the leaderboard.' },
       ]);
@@ -585,11 +585,28 @@ export default function TerminalCLI() {
         add([{ type: 'error', text: '  X handle must be 2-20 characters.' }]);
         return;
       }
-      setRegisterMode({ step: 'archetype', data: { ...data, xHandle } });
+      setRegisterMode({ step: 'wallet', data: { ...data, xHandle } });
       add([
         { type: 'output', text: `  X Handle: ${xHandle}` },
         { type: 'output', text: '' },
-        { type: 'output', text: '  Step 3/3: Choose archetype:' },
+        { type: 'output', text: '  Step 3/4: Base wallet address for $FIGHT rewards:' },
+        { type: 'system', text: '  (Press Enter to skip)' },
+      ]);
+      return;
+    }
+
+    if (step === 'wallet') {
+      const walletAddress = value.trim();
+      // Basic validation: must be 0x... or empty (skip)
+      if (walletAddress && !/^0x[0-9a-fA-F]{40}$/.test(walletAddress)) {
+        add([{ type: 'error', text: '  Invalid address. Must be 0x... (42 chars), or press Enter to skip.' }]);
+        return;
+      }
+      setRegisterMode({ step: 'archetype', data: { ...data, walletAddress: walletAddress || undefined } });
+      add([
+        { type: 'output', text: walletAddress ? `  Wallet: ${walletAddress}` : '  Wallet: skipped' },
+        { type: 'output', text: '' },
+        { type: 'output', text: '  Step 4/4: Choose archetype:' },
         { type: 'output', text: '  [striker] [grappler] [balanced] [pressure] [counter]' },
         { type: 'system', text: '  Stats will be auto-assigned based on your choice.' },
       ]);
@@ -620,7 +637,12 @@ export default function TerminalCLI() {
           body: JSON.stringify({
             name: data.name,
             stats: { ...stats, name: data.name },
-            metadata: { xHandle: data.xHandle, totalFights: 0, losses: 0 },
+            metadata: {
+              xHandle: data.xHandle,
+              walletAddress: data.walletAddress || undefined,
+              totalFights: 0,
+              losses: 0,
+            },
           }),
         });
         const result = await res.json();
@@ -633,6 +655,7 @@ export default function TerminalCLI() {
             { type: 'fight', text: `  >> ${data.name} has entered the arena!` },
             { type: 'output', text: `  Archetype: ${arch}` },
             { type: 'output', text: `  X Handle: ${data.xHandle}` },
+            ...(data.walletAddress ? [{ type: 'output' as const, text: `  Wallet: ${data.walletAddress}` }] : []),
             { type: 'output', text: `  ID: ${result.id}` },
             { type: 'output', text: '' },
             { type: 'system', text: '  Stats auto-assigned based on your archetype.' },

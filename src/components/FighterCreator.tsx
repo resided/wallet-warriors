@@ -11,6 +11,8 @@ interface FighterCreatorProps {
     nickname: string;
     templateId: string;
     stats: FighterTemplate['stats'];
+    xHandle?: string;
+    walletAddress?: string;
   }) => void;
   onCancel: () => void;
 }
@@ -193,6 +195,8 @@ export function FighterCreator({ onComplete, onCancel }: FighterCreatorProps) {
   const [customStats, setCustomStats] = useState<FighterTemplate['stats'] | null>(null);
   const [fighterName, setFighterName] = useState('');
   const [fighterNickname, setFighterNickname] = useState('');
+  const [fighterXHandle, setFighterXHandle] = useState('');
+  const [fighterWallet, setFighterWallet] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleTemplateSelect = (template: FighterTemplate) => {
@@ -214,6 +218,8 @@ export function FighterCreator({ onComplete, onCancel }: FighterCreatorProps) {
       nickname: fighterNickname || selectedTemplate.nickname,
       templateId: selectedTemplate.id,
       stats: customStats,
+      xHandle: fighterXHandle || undefined,
+      walletAddress: fighterWallet || undefined,
     });
   };
 
@@ -356,8 +362,12 @@ export function FighterCreator({ onComplete, onCancel }: FighterCreatorProps) {
             stats={customStats}
             name={fighterName}
             nickname={fighterNickname}
+            xHandle={fighterXHandle}
+            walletAddress={fighterWallet}
             onNameChange={setFighterName}
             onNicknameChange={setFighterNickname}
+            onXHandleChange={setFighterXHandle}
+            onWalletChange={setFighterWallet}
           />
         )}
       </div>
@@ -770,15 +780,23 @@ function StepThreeFinalize({
   stats,
   name,
   nickname,
+  xHandle,
+  walletAddress,
   onNameChange,
   onNicknameChange,
+  onXHandleChange,
+  onWalletChange,
 }: {
   template: FighterTemplate;
   stats: FighterTemplate['stats'];
   name: string;
   nickname: string;
+  xHandle: string;
+  walletAddress: string;
   onNameChange: (s: string) => void;
   onNicknameChange: (s: string) => void;
+  onXHandleChange: (s: string) => void;
+  onWalletChange: (s: string) => void;
 }) {
   const overall = calculateOverallRating(stats);
 
@@ -820,6 +838,34 @@ function StepThreeFinalize({
             <p className="text-xs text-zinc-600 mt-2">
               Default: "{template.nickname}"
             </p>
+          </div>
+
+          <div className="border border-zinc-800 bg-zinc-950/50 p-6">
+            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+              X Handle <span className="text-zinc-700 font-normal normal-case tracking-normal">— optional</span>
+            </label>
+            <input
+              type="text"
+              value={xHandle}
+              onChange={(e) => onXHandleChange(e.target.value)}
+              placeholder="@yourhandle"
+              className="w-full px-4 py-4 bg-black border border-zinc-700 text-white text-lg placeholder-zinc-700 focus:border-red-600 focus:outline-none transition-colors"
+            />
+            <p className="text-xs text-zinc-600 mt-2">Links your fighter to your X identity on the leaderboard</p>
+          </div>
+
+          <div className="border border-zinc-800 bg-zinc-950/50 p-6">
+            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+              Base Wallet <span className="text-zinc-700 font-normal normal-case tracking-normal">— optional</span>
+            </label>
+            <input
+              type="text"
+              value={walletAddress}
+              onChange={(e) => onWalletChange(e.target.value)}
+              placeholder="0x..."
+              className="w-full px-4 py-4 bg-black border border-zinc-700 text-white text-lg placeholder-zinc-700 focus:border-red-600 focus:outline-none font-mono transition-colors"
+            />
+            <p className="text-xs text-zinc-600 mt-2">Base wallet address to receive $FIGHT rewards</p>
           </div>
 
           {/* Quick Stats Summary */}
