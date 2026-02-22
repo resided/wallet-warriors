@@ -727,10 +727,6 @@ export default function TerminalCLI() {
         </div>
       </div>
 
-      {/* Input hint */}
-      <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-900 text-xs text-zinc-600 shrink-0">
-        <span>Type 'help' for commands | 'about' for info | 'faq' for common questions</span>
-      </div>
     </div>
   );
 }
